@@ -12,7 +12,7 @@ if(!chrome)throw new Error('Chrome/Chromium not found.');
 
 const server=spawn('python3',['-m','http.server',String(PORT),'--bind','127.0.0.1'],{cwd:ROOT,stdio:'ignore'});
 const profile=`/tmp/chess-command-cdp-${process.pid}`;
-const browser=spawn(chrome,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--disable-default-apps','--disable-sync','--no-first-run','--metrics-recording-only',`--remote-debugging-port=${DEBUG}`,`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore'});
+const browser=spawn(chrome,['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--disable-default-apps','--disable-sync','--no-first-run','--metrics-recording-only','--disable-extensions',`--remote-debugging-port=${DEBUG}`,`--user-data-dir=${profile}`,'about:blank'],{stdio:'ignore'});
 
 async function pollJson(url,tries=100){let last;for(let i=0;i<tries;i++){try{const r=await fetch(url);if(r.ok)return await r.json();last=new Error('HTTP '+r.status)}catch(e){last=e}await sleep(100)}throw last||new Error('debug endpoint unavailable')}
 async function pollHttp(url,tries=100){let last;for(let i=0;i<tries;i++){try{const r=await fetch(url,{cache:'no-store'});if(r.ok)return true;last=new Error('HTTP '+r.status)}catch(e){last=e}await sleep(100)}throw last||new Error('app server unavailable')}
@@ -21,8 +21,9 @@ function connect(url){return new Promise((resolve,reject)=>{const ws=new WebSock
 try{
  await pollHttp(`http://127.0.0.1:${PORT}/index.html`);
  const targets=await pollJson(`http://127.0.0.1:${DEBUG}/json/list`);
- if(!targets.length)throw new Error('No Chrome debug target.');
- const ws=await connect(targets[0].webSocketDebuggerUrl);
+ const target=targets.find(t=>t.type==='page'&&!String(t.url||'').startsWith('chrome-extension://')&&(t.url==='about:blank'||String(t.url||'').startsWith('http')))||targets.find(t=>t.type==='page'&&!String(t.url||'').startsWith('chrome-extension://'));
+ if(!target)throw new Error('No normal Chrome page target. Targets: '+JSON.stringify(targets.map(t=>({type:t.type,url:t.url,title:t.title}))));
+ const ws=await connect(target.webSocketDebuggerUrl);
  let seq=0;const pending=new Map(),runtimeErrors=[];
  ws.addEventListener('message',ev=>{const m=JSON.parse(ev.data);if(m.method==='Runtime.exceptionThrown')runtimeErrors.push(m.params?.exceptionDetails?.text||'runtime exception');if(m.id&&pending.has(m.id)){const {resolve,reject}=pending.get(m.id);pending.delete(m.id);m.error?reject(new Error(JSON.stringify(m.error))):resolve(m.result)}});
  const send=(method,params={})=>new Promise((resolve,reject)=>{const id=++seq;pending.set(id,{resolve,reject});ws.send(JSON.stringify({id,method,params}))});
