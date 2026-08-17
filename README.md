@@ -12,7 +12,7 @@ A job ad mentioned Star Trek, I discovered the multi-level Tri-D chess board, an
 
 **https://mikelninh.github.io/chess-command/**
 
-## Current release — V10
+## Current release — V11
 
 ### V1 · Play
 - full legal standard chess board
@@ -81,6 +81,16 @@ A job ad mentioned Star Trek, I discovered the multi-level Tri-D chess board, an
 - integrates the V6–V9 intelligence layer into Progress instead of adding another cluttered navigation tab
 - deterministic recommendation core is independently tested
 
+### V11 · Deep Review
+- Stockfish MultiPV support for up to three candidate moves per analysed position
+- evaluation graph across the game
+- deeper move classification and turning-point detection
+- deterministic themes such as missed mate, missed check, missed tactic, bad capture, early queen, development, king safety, calculation and endgame technique
+- candidate lines translated into SAN for easier comparison
+- one clear next action from the selected mistake
+- deep-review evidence feeds back into the V10 weakness model instead of living in an isolated screen
+- local fallback remains available when Stockfish cannot load
+
 ## Mobile / PWA
 
 Play is deliberately a one-screen mobile experience: opponent row → board → player row → compact actions → bottom navigation. Opponent strength, Coach and Moves open as a bottom sheet instead of forcing the board off screen.
@@ -99,9 +109,12 @@ Browser / PWA
 │   ├── Stockfish bridge
 │   └── local practice-bot fallback
 ├── Review
-│   ├── engine evaluations
-│   ├── move classifications
-│   └── mistake → personal puzzle
+│   ├── V2 fast review
+│   └── V11 deep review
+│       ├── MultiPV candidate lines
+│       ├── evaluation graph
+│       ├── mistake taxonomy
+│       └── coach evidence
 ├── Learn
 │   ├── Opening Academy + SRS
 │   ├── Middlegame foundations
@@ -120,7 +133,7 @@ Browser / PWA
 └── service worker / offline shell
 ```
 
-Chess truth stays deterministic. An LLM is not required for legal moves, engine evaluation, puzzle validation or the V10 recommendation core. Richer natural-language coaching can be layered on later without becoming the source of truth.
+Chess truth stays deterministic. An LLM is not required for legal moves, engine evaluation, puzzle validation, mistake taxonomy or the recommendation core. Richer natural-language coaching can be layered on later without becoming the source of truth.
 
 ## Run locally
 
@@ -137,26 +150,27 @@ The release gate checks:
 - SAN and PGN round-trip
 - V5 queen-mate, rook-mate and promotion drills
 - V10 weakness scoring, adaptive priorities, opponent summaries and streak memory
-- JavaScript syntax across the game, mobile, PWA, V5 and V10 modules
+- V11 loss classes, tactical themes, review priority and deep-review → coach integration
+- JavaScript syntax across the game, Stockfish bridge, mobile/PWA, V5, V10 and V11 modules
 
 ```bash
 npm run release:check
 ```
 
-## What V10 is — and is not
+## What V11 is — and is not
 
-V10 is a fast-moving, local-first product prototype with a complete personal-learning loop. It is not yet the production depth of a mature chess platform: the puzzle corpus is still small, engine review needs deeper multi-PV analysis, the curriculum needs much more content, and long-term calibration needs real playing data.
+V11 is a fast-moving, local-first product prototype with a complete personal-learning loop and a significantly deeper review layer. It is still not the production depth of a mature chess platform: the puzzle corpus is small, engine calibration needs real games, the curriculum needs much more content, and the low-Elo bots still need more human-like behaviour.
 
-The next phase is therefore depth, quality and real-user learning evidence rather than adding ten more navigation items.
+The next phase remains depth, quality and real-user learning evidence rather than adding navigation for its own sake.
 
-## V11+
+## V12+
 
-1. deeper multi-ply Game Review, evaluation graph and multi-PV comparisons
-2. much larger curated puzzle corpus and tactical-theme mastery
-3. richer middlegame curriculum: pins, skewers, pawn structures, planning, prophylaxis
-4. richer endgame curriculum: opposition, pawn races, Lucena, Philidor
-5. calibrated skill estimates from many real games
-6. stronger human-like computer personalities at low and intermediate Elo
+1. larger curated puzzle corpus and tactical-theme mastery
+2. richer middlegame curriculum: pins, skewers, pawn structures, planning, prophylaxis
+3. richer endgame curriculum: opposition, pawn races, Lucena, Philidor
+4. calibrated skill estimates from many real games
+5. stronger human-like computer personalities at low and intermediate Elo
+6. opening explorer and repertoire tree
 7. optional cloud sync and accounts
 8. friend challenges and multiplayer
 9. creator-friendly skin specification and community theme packs
