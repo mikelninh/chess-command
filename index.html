@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#05070d">
+  <title>Tri-D Command — Chess Opening Academy</title>
+  <meta name="description" content="A visual chess opening trainer for a beginner who wants to beat his friend — plus a playable Tri-D chess experiment inspired by Star Trek.">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="starfield" aria-hidden="true"></div>
+  <div id="fatalError" class="fatal-error" hidden>
+    <b>TACTICAL CORE ERROR</b>
+    <span>The board failed to initialise. Refresh once; if this persists, the runtime log has the details.</span>
+  </div>
+
+  <div class="app-shell">
+    <header class="command-header">
+      <div class="lcars-elbow" aria-hidden="true"><i></i><i></i><i></i></div>
+      <div class="identity">
+        <div class="delta-mark" aria-hidden="true"><span>♞</span></div>
+        <div>
+          <div class="eyebrow">CADET CHESS LAB // PERSONAL BUILD</div>
+          <h1>TRI-D COMMAND</h1>
+          <p>Learn the openings. Then leave the flat board behind.</p>
+        </div>
+      </div>
+      <div class="status-cluster">
+        <span><small>GOAL</small><b>BEAT MY FRIEND</b></span>
+        <span><small>RULESET</small><b>FRS 5.0 BETA</b></span>
+        <span><small>TURN</small><b id="turnTop">WHITE</b></span>
+      </div>
+    </header>
+
+    <nav class="mode-rail tabs" aria-label="Application modes">
+      <button class="active" data-tab="academy"><span>01</span> OPENING ACADEMY</button>
+      <button data-tab="trid"><span>02</span> TRI-D EXPERIMENT</button>
+      <button data-tab="rules"><span>03</span> RULES / SYSTEM</button>
+      <div class="rail-segments" aria-hidden="true"><i></i><i></i><i></i></div>
+    </nav>
+
+    <main>
+      <section id="academyTab" class="tab active">
+        <div class="academy-shell">
+          <section class="academy-stage">
+            <div class="stage-kicker">
+              <div><span class="eyebrow">STANDARD CHESS // INTERACTIVE DRILL</span><strong id="academyTurn">WHITE TO MOVE</strong></div>
+              <div class="principle-strip"><span>CENTRE</span><span>DEVELOP</span><span>CASTLE</span></div>
+            </div>
+
+            <div class="academy-board-frame">
+              <div id="academyBoard" class="academy-board" aria-label="Interactive standard chess board"></div>
+              <div class="board-glow" aria-hidden="true"></div>
+            </div>
+
+            <div class="academy-controls">
+              <button id="prevOpening">← REWIND</button>
+              <button id="hintOpening">VECTOR HINT</button>
+              <button id="revealOpening">REVEAL MOVE</button>
+              <button id="resetOpening" class="quiet">RESET LINE</button>
+            </div>
+          </section>
+
+          <aside class="lesson-deck">
+            <section class="origin-log">
+              <div class="panel-label amber">WHY I BUILT THIS</div>
+              <p><b>My friend is into chess. I’m starting from scratch.</b> The plan is simple: learn the important openings well enough to finally make our games interesting — and, ideally, beat him.</p>
+              <p class="origin-foot">The Star Trek line in a job ad sent the project down a second, much stranger rabbit hole.</p>
+              <button id="goTrid" class="jump-trid">ENTER TRI-D →</button>
+            </section>
+
+            <section class="opening-picker">
+              <div class="panel-label violet">OPENING ATLAS</div>
+              <div id="openingList" class="opening-list"></div>
+            </section>
+
+            <section class="lesson-card">
+              <div class="lesson-head">
+                <span class="eyebrow">CURRENT PATTERN</span>
+                <div class="progress-shell"><i id="academyProgress"></i></div>
+              </div>
+              <h2 id="openingName">Italian Game</h2>
+              <p id="openingWhy" class="opening-why"></p>
+              <div id="openingMoves" class="opening-moves"></div>
+              <div class="insight-card">
+                <small>WHY THE NEXT MOVE EXISTS</small>
+                <p id="academyInsight"></p>
+              </div>
+              <div id="academyStatus" class="academy-status">Find the next move directly on the board.</div>
+            </section>
+          </aside>
+        </div>
+      </section>
+
+      <section id="tridTab" class="tab">
+        <div class="trid-layout">
+          <section class="scene-card">
+            <div class="scene-topbar">
+              <div>
+                <span class="eyebrow">TACTICAL VOLUME // LIVE POSITION</span>
+                <strong id="gameStatus">White to move.</strong>
+              </div>
+              <div class="view-actions">
+                <button id="topView">TOP</button>
+                <button id="heroView" class="active-view">BRIDGE</button>
+                <button id="sideView">SIDE</button>
+              </div>
+            </div>
+
+            <div class="scene" id="scene">
+              <div class="scene-hud hud-left">
+                <small>MISSION</small>
+                <b id="missionText">Free play. Select a piece to reveal legal vectors.</b>
+              </div>
+              <div class="axis axis-y">RANKS ↑</div>
+              <div class="axis axis-x">FILES →</div>
+              <div class="scene-core" aria-hidden="true"></div>
+              <div class="world" id="world"></div>
+            </div>
+
+            <div class="scene-caption">
+              <span>DRAG EMPTY SPACE TO ROTATE</span>
+              <span>CYAN = LEGAL VECTOR</span>
+              <span>THE BOARD ITSELF CAN MOVE</span>
+            </div>
+          </section>
+
+          <aside class="command-deck">
+            <div class="command-spine violet"><span>COMMAND</span></div>
+            <section class="selected-card">
+              <small>SELECTED OBJECT</small>
+              <strong id="selectedText">Nothing selected</strong>
+              <span id="selectedSub">Choose a piece or attack board.</span>
+              <p id="moveInfo"></p>
+            </section>
+
+            <div class="panel-label cyan">ATTACK BOARDS</div>
+            <div id="abList" class="ab-list"></div>
+            <div id="abActions" class="ab-actions"></div>
+
+            <div class="panel-label amber">LAST EVENT</div>
+            <div id="lastEvent" class="event-log">Opening position loaded.</div>
+          </aside>
+        </div>
+
+        <section class="tri-mission-bar">
+          <div>
+            <span class="eyebrow">FASTEST WAY TO UNDERSTAND TRI-D</span>
+            <strong>Make the battlefield move.</strong>
+          </div>
+          <button id="warpMission" class="mission-button">▶ 60-SEC WARP-PAWN MISSION</button>
+          <button id="freePlay">FREE PLAY / RESET</button>
+          <button id="undo">↶ UNDO TURN</button>
+          <button id="reset" class="ghost-reset">RESET MATCH</button>
+          <label class="toggle"><input id="rookPawn" type="checkbox" checked><span></span> rook-pawn side option</label>
+        </section>
+
+        <section class="mechanic-strip">
+          <article><span>01</span><div><b>LOOK DOWN</b><p>Pieces keep normal chess geometry in the top-down projection, but can finish on another level.</p></div></article>
+          <article><span>02</span><div><b>CHANGE LEVEL</b><p>Sliding pieces follow the highest available path through overlapping boards.</p></div></article>
+          <article><span>03</span><div><b>MOVE THE BOARD</b><p>An eligible 2×2 attack board can reposition — and can carry one of your pawns with it.</p></div></article>
+        </section>
+      </section>
+
+      <section id="rulesTab" class="tab">
+        <div class="rules-intro">
+          <span class="eyebrow">UNOFFICIAL FAN IMPLEMENTATION</span>
+          <h2>The television prop came first. The playable rules came later.</h2>
+          <p>This build follows the Federation Revised Standard 5.0 family of fan rules. It is a deterministic game-engine experiment, not an official Star Trek product.</p>
+        </div>
+        <div class="rules-grid">
+          <article><span>01</span><h3>64 squares, unusual geometry</h3><p>Three fixed 4×4 main boards plus four movable 2×2 attack boards.</p></article>
+          <article><span>02</span><h3>Projected movement</h3><p>Rooks, bishops, queens, kings and pawns keep recognisable chess geometry while traversing elevations.</p></article>
+          <article><span>03</span><h3>Movable terrain</h3><p>Moving an eligible attack board consumes a turn. A single owned pawn may ride with it.</p></article>
+          <article><span>04</span><h3>King safety</h3><p>Legal moves and attack-board actions are rejected when they leave your king exposed.</p></article>
+          <article><span>05</span><h3>Chess rules retained</h3><p>Check, checkmate, stalemate, castling, promotion and standard en passant are modelled in the beta engine.</p></article>
+          <article><span>06</span><h3>Why “beta”?</h3><p>The common rule path is playable and tested; obscure Tri-D-specific edge interactions still deserve more conformance tests.</p></article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer-line">
+      <span>Built because my friend likes chess and a job ad made me curious.</span>
+      <span>JavaScript rules engine · CSS 3D · C#/.NET companion API · SQLite</span>
+    </footer>
+  </div>
+
+  <script>
+    window.addEventListener('error', function (event) {
+      console.error('Tri-D runtime error:', event.error || event.message);
+      var banner = document.getElementById('fatalError');
+      if (banner) banner.hidden = false;
+    });
+  </script>
+  <script src="bundle.js"></script>
+</body>
+</html>
