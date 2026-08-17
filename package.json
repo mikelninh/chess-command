@@ -1,0 +1,10 @@
+{
+  "name": "trid-command",
+  "version": "0.4.0",
+  "private": true,
+  "description": "Interactive chess opening trainer plus a playable Tri-D chess experiment.",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node tests/engine.test.js"
+  }
+}
