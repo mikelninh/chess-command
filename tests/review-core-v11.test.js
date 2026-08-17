@@ -1,0 +1,11 @@
+'use strict';
+const assert=require('assert');
+const R=require('../review-core-v11.js');
+assert.equal(R.classifyLoss(0,true),'Best');
+assert.equal(R.classifyLoss(240,false),'Blunder');
+assert.equal(R.theme({loss:180,bestCapture:true,actualCapture:false,moveNo:14}),'missed-tactic');
+assert.equal(R.theme({loss:90,piece:'Q',moveNo:4}),'early-queen');
+assert.equal(R.phase({moveNo:32,materialPieces:8}),'endgame');
+assert(R.accuracy([0,20,40])>R.accuracy([0,120,300]));
+assert.equal(R.priority([{side:'w',loss:20},{side:'b',loss:800},{side:'w',loss:200}]).loss,200);
+console.log('V11 review core tests passed.');
