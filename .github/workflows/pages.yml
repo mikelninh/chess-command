@@ -1,4 +1,4 @@
-name: Deploy GitHub Pages
+name: Deploy Chess Command
 
 on:
   push:
@@ -25,15 +25,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '8.0.x'
-      - name: Build browser bundle
-        run: npm run build
-      - name: Run engine tests
+      - name: Run Chess Command tests
         run: npm test
-      - name: Build .NET companion API
-        run: dotnet build api/TriDCommand.Api/TriDCommand.Api.csproj --configuration Release
+      - name: JavaScript syntax checks
+        run: |
+          node --check chess-core.js
+          node --check data.js
+          node --check stockfish-bridge.js
+          node --check chess-app.js
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
