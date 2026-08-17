@@ -6,6 +6,7 @@ const $=id=>document.getElementById(id),clamp=R.clamp;
 const state=load(KEY,{version:11,reviews:{}});
 function load(k,d={}){try{return Object.assign({},d,JSON.parse(localStorage.getItem(k)||'{}'))}catch{return JSON.parse(JSON.stringify(d))}}
 function persist(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch{}}
+function syncCoachEvidence(gameId,rows){try{const L=load(LEARN,{games:[]}),g=(L.games||[]).find(x=>x.id===gameId);if(!g)return;g.review=g.review||{};g.review.deepRows=rows;g.review.deepAt=Date.now();localStorage.setItem(LEARN,JSON.stringify(L))}catch{}}
 function learning(){return load(LEARN,{games:[]})}
 function game(){return learning().games?.[0]||null}
 function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
@@ -52,7 +53,7 @@ async function run(force=false){
    const theme=R.theme(meta),classification=R.classifyLoss(loss,best===g.moves[i]),candidates=lines.slice(0,3).map(l=>{const u=l.bestMove||l.pv?.[0],m=moveObj(before,u);return{move:u,san:m?C.san(before,m):u,scoreWhite:l.scoreWhite,line:pvSan(before,l.pv,5),depth:l.depth||0}});
    const row={ply:i,moveNo:meta.moveNo,side,uci:g.moves[i],san:sans[i],classification,loss,evalAfter:afterEval,fen:C.fen(before),bestMove:best,bestSan:candidates[0]?.san||best,theme,candidates};row.explain=R.explanation({...meta,theme,bestMove:best,bestSan:row.bestSan,actualSan:row.san});rows.push(row);if(side==='w')humanLosses.push(loss)
  }
- const review={version:11,at:Date.now(),engine:CC.getEngine()?.mode||'fallback',accuracy:R.accuracy(humanLosses),rows};state.reviews[g.id]=review;const ids=Object.keys(state.reviews).sort((a,b)=>(state.reviews[b]?.at||0)-(state.reviews[a]?.at||0));for(const id of ids.slice(30))delete state.reviews[id];persist();$('deepBar').style.width='100%';$('deepProgressText').textContent=`Done · ${review.accuracy}% deep accuracy`;$('deepAnalyse').disabled=false;setTimeout(()=>{$('deepProgress').hidden=true},700);render();document.dispatchEvent(new CustomEvent('cc:deepreview',{detail:{gameId:g.id,review}}));
+ const review={version:11,at:Date.now(),engine:CC.getEngine()?.mode||'fallback',accuracy:R.accuracy(humanLosses),rows};state.reviews[g.id]=review;const ids=Object.keys(state.reviews).sort((a,b)=>(state.reviews[b]?.at||0)-(state.reviews[a]?.at||0));for(const id of ids.slice(30))delete state.reviews[id];persist();syncCoachEvidence(g.id,rows);$('deepBar').style.width='100%';$('deepProgressText').textContent=`Done · ${review.accuracy}% deep accuracy`;$('deepAnalyse').disabled=false;setTimeout(()=>{$('deepProgress').hidden=true},700);render();document.dispatchEvent(new CustomEvent('cc:deepreview',{detail:{gameId:g.id,review}}));
 }
 document.addEventListener('cc:gameover',()=>setTimeout(render,50));ensureUI();render();
 })();
