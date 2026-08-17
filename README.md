@@ -1,6 +1,6 @@
 # Chess Command
 
-> A free, mobile-first personal chess gym: play, review, learn openings, solve tactical puzzles, track progress, prepare for friends, and grow from beginner to serious chess. Tri-D lives in the Lab as the strange bonus experiment that started this journey.
+> A free, mobile-first personal chess gym: play, review, learn openings, solve serious tactical puzzles, track progress, prepare for friends, and grow from beginner to strong chess. Tri-D lives in the Lab as the strange bonus experiment that started this journey.
 
 ## Why I built it
 
@@ -12,79 +12,81 @@ A job ad mentioned Star Trek, I discovered the multi-level Tri-D chess board, an
 
 **https://mikelninh.github.io/chess-command/**
 
-## Current release — V15
+## Current release — V18 · Core Loop
 
-### V1 · Play
-- full legal standard chess board
-- phone-first, no-scroll Play screen
-- local SVG chess pieces
-- computer opponents from beginner through 1800 / 2000 / 2200 / 2400 / 2600 / 2800 / 3000+ and MAX
-- Stockfish 18 integration for stronger levels when available
-- local practice-bot fallback
-- undo, flip, resign, move log and material display
-- local rating progression
-- installable PWA and offline core app
-
-### V2–V5 · Learning loop
-- Game Review with engine evaluation and mistake → personal puzzle conversion
-- Opening Academy with hints, explanations and spaced repetition
-- adaptive tactical puzzles and personal positions
+### V1–V5 · Play → Review → Learn
+- full legal standard chess with phone-first, no-scroll Play
+- computer opponents from beginner through 3000+ and MAX
+- Stockfish integration with local practice fallback
+- Game Review, mistake classifications and personal puzzles
+- Opening Academy + spaced repetition
 - middlegame / endgame foundations
 - SAN + PGN import/export
-- adaptive next-training recommendation
 
-### V6–V10 · Personal chess intelligence
-- weakness model: Opening, Tactics, Calculation, Development, King Safety and Endgame
-- evidence/confidence tracking
-- adaptive daily curriculum
-- opponent profiles from imported PGNs
+### V6–V11 · Personal chess intelligence
+- weakness model with evidence/confidence
+- adaptive curriculum and next-best-action coach
+- opponent preparation from imported PGNs
 - long-term local training memory
-- target-rating goals and next-best-action coach
+- Stockfish MultiPV Deep Review
+- evaluation graph, turning points and deterministic mistake taxonomy
 
-### V11 · Deep Review
-- Stockfish MultiPV candidate moves
-- evaluation graph
-- turning-point detection
-- deterministic mistake taxonomy
-- candidate lines in SAN
-- Deep Review feeds evidence back into the weakness model
+### V12–V15 · Tactical Gym + Opening Lab
+- curated tactical motifs and personal puzzles generated from reviewed games
+- puzzle rating, mastery, streaks, XP and achievements
+- mobile repertoire dashboard, weakest-line drilling and Opening SRS
+- Adaptive / timed / survival puzzle training
+- global player journey and Road to 1000
 
-### V12 · Tactical Gym
-- curated tactical puzzle bank + personal puzzles from reviewed games
-- Mate, Fork, Pin, Skewer, Hanging Piece, Deflection, Removing Defender, Defense and Discovered Attack
-- puzzle rating, theme mastery, XP, levels, streaks, daily quest and achievements
-- one-screen mobile Tactical Gym
+### V16 · Puzzle Depth
+- **3,000 filtered Lichess CC0 puzzles** bundled for fast/offline training
+- generated from the official Lichess open puzzle database
+- rating window 400–2400 with popularity/play-count filtering
+- Mate, Fork, Pin, Skewer and additional tactical motifs, supplemented by Chess Command's curated teaching pack
+- the Lichess setup move is applied automatically before the player sees the position
+- long cross-session anti-repeat history so the same positions do not keep resurfacing
+- existing 80-position curated/offline bank remains available
+- mistakes from your own games remain first-class personal puzzles
+- every imported full UCI line is replayed by the deterministic chess core in CI before release
 
-### V13 · Game Feel
-- drag-to-move alongside tap-to-move
-- lightweight Web Audio move / capture / check / success feedback
-- optional haptic feedback where the browser supports it
-- check, capture and victory board feedback
-- game-feel toggle in the app shell
+Source dataset: https://database.lichess.org/#puzzles — CC0.
 
-### V14 · Opening Lab
-- mobile repertoire dashboard over the existing Opening Academy
-- per-opening mastery from real attempts
-- weakest-line drilling
-- spaced-repetition due count
-- Memory Mode hides explanatory copy until needed
-- focused beginner repertoire map for White, Black vs e4 and Black vs d4
+### V17 · Premium Game Feel
+- tap-to-move + native-feeling drag-to-move
+- smooth piece travel instead of teleporting after a DOM rerender
+- capture fade and castling animation
+- clearer last-move, legal-move and selected-square feedback
+- move / capture / check / result audio cues
+- optional haptic feedback
+- reduced-motion support
+- Board Feel settings for sound, haptics and motion
+- proper post-game result moment with rating change, **Review Game** and **Rematch**
 
-### V15 · Solo Training Release
-- **80 CI-validated offline tactical positions** generated from the curated tactical set through legality-preserving board symmetries
-- Adaptive, **Sprint 3:00**, **Survival** and **Daily 5** puzzle modes
-- global progression across puzzles, openings, games and Deep Review
-- global XP / levels / rank titles
-- daily missions and milestone achievements
-- Road to 1000 rating view
-- V15 layers are cached by the PWA for offline use
-- multiplayer deliberately postponed: V15 focuses on making the solo learning loop excellent first
+### V18 · Progression + Puzzle Sessions
+- **Adaptive** endless tactical training
+- **Rush 3:00** — wrong attempts cost five seconds
+- **Survival** — three lives
+- **Daily Five** — a deliberately small daily tactical dose
+- **Theme Run** — ten positions in one tactical motif
+- session recap: solved, accuracy, average solve time and best flow/combo
+- personal bests for Rush, Survival and Theme Run
+- global XP and ranks separated from actual chess/puzzle rating
+- daily missions with real completion bonuses
+- bonus for clearing the full daily board
+- five-day weekly consistency reward
+- tactical mastery from actual theme performance
+- progression milestones at puzzle counts, streaks, ratings and XP
+- visible Road to 1000
+- local-time streak handling
+- compact +XP feedback
 
 ## Mobile / PWA
 
-**Play** and **Puzzles** are deliberately designed as one-screen mobile experiences. The board stays visible while essential actions remain reachable with one thumb. Longer study surfaces such as Learn, Review and Progress can scroll because they contain actual study material.
+**Play** and **Puzzles** are one-screen mobile experiences. The board remains the primary surface; essential controls stay reachable with one thumb.
 
-The PWA supports home-screen installation, offline access to the core app and automatic refresh when a new service-worker build activates.
+V18 deliberately removes the redundant puzzle daily-quest strip from the phone puzzle screen so mode controls and the board fit without scrolling. Longer study surfaces such as Learn, Review and Progress can scroll because they contain actual study material.
+
+The PWA supports home-screen installation, the V18 core loop is cached for offline use, and new service-worker builds refresh automatically.
 
 ## Architecture
 
@@ -94,31 +96,32 @@ Browser / PWA
 │   ├── deterministic chess core
 │   ├── Stockfish bridge
 │   ├── local practice-bot fallback
-│   └── V13 game-feel layer
+│   └── V17 board-feel / motion layer
 ├── Review
-│   ├── fast review
 │   └── V11 Deep Review / MultiPV / taxonomy
 ├── Learn
 │   ├── Opening Academy + SRS
-│   ├── V14 Opening Lab / mastery / memory mode
+│   ├── Opening Lab / mastery / memory mode
 │   ├── Middlegame foundations
 │   └── Endgame foundations
 ├── Tactical Gym
-│   ├── curated tactical seeds
-│   ├── V15 symmetry-expanded offline pack
-│   ├── personal puzzles from your games
-│   ├── Adaptive / Sprint / Survival / Daily 5
-│   ├── puzzle Elo + theme mastery
-│   └── tactical XP / streaks
+│   ├── curated teaching pack
+│   ├── 80 transformed offline positions
+│   ├── 3,000 filtered Lichess CC0 positions
+│   ├── personal puzzles from your own games
+│   ├── adaptive anti-repeat provider
+│   ├── Adaptive / Rush / Survival / Daily Five / Theme Run
+│   └── puzzle rating + per-theme mastery
 ├── Intelligence
 │   ├── weakness model
 │   ├── adaptive curriculum
 │   ├── opponent preparation
 │   ├── long-term memory
 │   └── personal coach
-├── V15 Player Journey
+├── Player Journey
 │   ├── global XP + ranks
-│   ├── daily missions
+│   ├── daily + weekly missions
+│   ├── session personal bests
 │   ├── milestones
 │   └── Road to 1000
 ├── Themes
@@ -144,25 +147,22 @@ The release gate checks:
 - V5 endgame drills
 - V10 weakness scoring and adaptive priorities
 - V11 review taxonomy and Deep Review → Coach integration
-- all V12 curated tactical lines are legal
-- **all V15 transformed tactical lines are legal from their transformed FENs**
-- JavaScript syntax across the game, review, puzzles, opening lab, game-feel, progression, mobile and PWA modules
+- all curated and V15 transformed tactical lines are legal
+- **all 3,000 V16 imported Lichess puzzle lines are replayed legally from their source FENs**
+- imported rating/popularity constraints and broad motif coverage
+- JavaScript syntax across the game, Stockfish bridge, review, puzzle provider/modes, Opening Lab, board feel, progression, mobile and PWA modules
 
 ```bash
 npm run release:check
 ```
 
-## What V15 is — and is not
+## What V18 is — and is not
 
-V15 is a strong local-first solo chess-training prototype. It now has a coherent loop from play → review → diagnose → puzzles/opening practice → progression → play again, with a substantially better mobile experience.
+V18 is a strong local-first solo chess-training product with a coherent loop:
 
-It is still not a mature chess platform. The biggest remaining gaps are content scale, deeper opening data, richer middlegame/endgame curriculum, more human-like low-Elo bots, production-grade calibration, accounts/cloud sync and eventually multiplayer.
+**play → review → diagnose → solve / drill → see progress → play again**
 
-The next work should deepen those areas rather than add navigation for its own sake.
-
-## Open puzzle / content direction
-
-The puzzle provider is intentionally separable from the Tactical Gym UI. This lets the project later ingest a much larger open puzzle corpus while keeping a fast offline seed pack and personal puzzles generated from the player's own games.
+The puzzle/content and motivation gaps are dramatically smaller than in V15. It is still not a mature Chess.com/Lichess-scale platform: multiplayer is deliberately postponed, the Opening Lab needs a deeper repertoire tree/database, middlegame/endgame content needs much more depth, low-Elo bots need more human-like calibration, and the board still needs real-device QA to earn a claim of truly world-class interaction polish.
 
 ## Open-source direction
 
