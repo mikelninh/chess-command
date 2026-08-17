@@ -25,3 +25,11 @@ jobs:
         run: python -m pip install --disable-pip-version-check --quiet 'selenium>=4.20,<5'
       - name: Chess Command release checks
         run: npm run release:check
+      - name: Keep rendered mobile screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-visual-screenshots
+          path: /tmp/chess-command-*.png
+          if-no-files-found: ignore
+          retention-days: 7
