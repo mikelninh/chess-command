@@ -1,0 +1,50 @@
+name: Build V16 puzzle pack
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/build-puzzle-pack-v16.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-pack:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install zstd
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq zstd
+      - name: Stream Lichess CC0 puzzles and build compact pack
+        run: |
+          curl -L --fail --retry 3 https://database.lichess.org/lichess_db_puzzle.csv.zst \
+            | zstdcat \
+            | python3 scripts/build_lichess_pack.py > puzzle-pack-lichess-v16.js
+          test -s puzzle-pack-lichess-v16.js
+      - name: Validate generated lines with Chess Command core
+        run: |
+          node - <<'NODE'
+          const C=require('./chess-core.js');
+          const pack=require('./puzzle-pack-lichess-v16.js');
+          if(pack.length<1200) throw new Error(`pack too small: ${pack.length}`);
+          for(const [id,fen,moves] of pack){
+            let s=C.fromFEN(fen); if(!s) throw new Error(`${id}: bad FEN`);
+            for(const u of moves.split(' ')){
+              const n=C.make(s,u); if(!n) throw new Error(`${id}: illegal ${u}`); s=n;
+            }
+          }
+          console.log(`Validated ${pack.length} Lichess puzzle lines.`);
+          NODE
+      - name: Commit generated pack
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add puzzle-pack-lichess-v16.js
+          if git diff --cached --quiet; then
+            echo 'Puzzle pack already current.'
+            exit 0
+          fi
+          git commit -m 'V16: refresh Lichess CC0 puzzle pack'
+          git push
