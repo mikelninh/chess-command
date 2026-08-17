@@ -12,7 +12,7 @@ A job ad mentioned Star Trek, I discovered the multi-level Tri-D chess board, an
 
 **https://mikelninh.github.io/chess-command/**
 
-## Current release — V18 · Core Loop
+## Current release — V21 · Premium Clarity
 
 ### V1–V5 · Play → Review → Learn
 - full legal standard chess with phone-first, no-scroll Play
@@ -72,21 +72,40 @@ Source dataset: https://database.lichess.org/#puzzles — CC0.
 - personal bests for Rush, Survival and Theme Run
 - global XP and ranks separated from actual chess/puzzle rating
 - daily missions with real completion bonuses
-- bonus for clearing the full daily board
 - five-day weekly consistency reward
 - tactical mastery from actual theme performance
 - progression milestones at puzzle counts, streaks, ratings and XP
 - visible Road to 1000
-- local-time streak handling
-- compact +XP feedback
+
+### V19–V20 · Viewport reliability
+- Play and Puzzles are treated as viewport applications rather than long web pages
+- desktop and mobile board dimensions are constrained by both width **and** available height
+- mobile-only controls cannot leak into desktop layouts
+- browser-default white buttons are rejected by the visual release gate
+- real Chrome renders are tested at 360×760, 390×844, 1366×768 and 1440×900
+- CI stores the rendered screenshots for inspection before release
+
+### V21 · Premium Clarity
+- **four real piece sets**: Command Classic (Chessnut), Spatial, Fantasy and Celtic
+- persistent piece-skin selector in Themes plus a quick picker in the top bar
+- permissively licensed upstream artwork with licences documented in `THIRD_PARTY_ASSETS.md`
+- puzzles automatically orient the solver's colour at the bottom
+- explicit **YOU · WHITE / YOU · BLACK** state on desktop and mobile
+- Play explicitly identifies **WHITE · YOU** and **BLACK · OPPONENT**
+- puzzle instructions say exactly how to interact: drag a piece or tap source → highlighted destination
+- legal quiet moves use dots; legal captures use rings
+- tapping the wrong colour tells the solver which side they own
+- fixed the drag-to-move suppression bug that could block the synthetic source/destination clicks
+- Hint / Reveal / Skip are available before solving; **Next puzzle** appears after completion
+- full interaction gate now proves Play drag, Puzzle tap, Puzzle drag, wrong-colour feedback and all four skin switches in a real browser
 
 ## Mobile / PWA
 
-**Play** and **Puzzles** are one-screen mobile experiences. The board remains the primary surface; essential controls stay reachable with one thumb.
+**Play** and **Puzzles** are one-screen experiences. The board remains the primary surface and essential controls stay reachable without scrolling.
 
-V18 deliberately removes the redundant puzzle daily-quest strip from the phone puzzle screen so mode controls and the board fit without scrolling. Longer study surfaces such as Learn, Review and Progress can scroll because they contain actual study material.
+Puzzle mode uses the current solver colour as the default perspective: White puzzles show White at the bottom; Black puzzles show Black at the bottom. The compact mobile HUD makes the side explicit before the first move.
 
-The PWA supports home-screen installation, the V18 core loop is cached for offline use, and new service-worker builds refresh automatically.
+The PWA supports home-screen installation, caches the local application shell, caches premium piece artwork after it is first loaded, and refreshes when the service-worker version changes.
 
 ## Architecture
 
@@ -96,7 +115,8 @@ Browser / PWA
 │   ├── deterministic chess core
 │   ├── Stockfish bridge
 │   ├── local practice-bot fallback
-│   └── V17 board-feel / motion layer
+│   ├── premium piece-skin layer
+│   └── board-feel / motion layer
 ├── Review
 │   └── V11 Deep Review / MultiPV / taxonomy
 ├── Learn
@@ -111,6 +131,7 @@ Browser / PWA
 │   ├── personal puzzles from your own games
 │   ├── adaptive anti-repeat provider
 │   ├── Adaptive / Rush / Survival / Daily Five / Theme Run
+│   ├── side-aware board orientation
 │   └── puzzle rating + per-theme mastery
 ├── Intelligence
 │   ├── weakness model
@@ -124,7 +145,7 @@ Browser / PWA
 │   ├── session personal bests
 │   ├── milestones
 │   └── Road to 1000
-├── Themes
+├── Themes / piece skins
 ├── Tri-D Lab
 └── service worker / offline shell
 ```
@@ -150,23 +171,31 @@ The release gate checks:
 - all curated and V15 transformed tactical lines are legal
 - **all 3,000 V16 imported Lichess puzzle lines are replayed legally from their source FENs**
 - imported rating/popularity constraints and broad motif coverage
-- JavaScript syntax across the game, Stockfish bridge, review, puzzle provider/modes, Opening Lab, board feel, progression, mobile and PWA modules
+- JavaScript syntax across the game, Stockfish bridge, review, puzzle provider/modes, Opening Lab, board feel, progression, clarity and PWA modules
+- rendered mobile geometry at 360×760 and 390×844
+- rendered desktop geometry at 1366×768 and 1440×900
+- correct White/Black puzzle orientation and explicit solver-side labels
+- premium SVG artwork actually loads
+- no leaked mobile controls, horizontal overflow, puzzle scrolling or browser-default white action buttons
+- real-browser **Play drag**, **Puzzle tap**, **Puzzle drag**, wrong-side feedback and all four premium skin switches
 
 ```bash
 npm run release:check
 ```
 
-## What V18 is — and is not
+## What V21 is — and is not
 
-V18 is a strong local-first solo chess-training product with a coherent loop:
+V21 is a strong local-first solo chess-training product with a coherent loop:
 
 **play → review → diagnose → solve / drill → see progress → play again**
 
-The puzzle/content and motivation gaps are dramatically smaller than in V15. It is still not a mature Chess.com/Lichess-scale platform: multiplayer is deliberately postponed, the Opening Lab needs a deeper repertoire tree/database, middlegame/endgame content needs much more depth, low-Elo bots need more human-like calibration, and the board still needs real-device QA to earn a claim of truly world-class interaction polish.
+The product now has a much stricter visual and interaction release bar. It is still not a mature Chess.com/Lichess-scale platform: multiplayer is deliberately postponed, the Opening Lab needs a deeper repertoire tree/database, middlegame/endgame content needs much more depth, and low-Elo bots need more human-like calibration.
 
 ## Open-source direction
 
 The intention is to keep the core learning/game project open and make themes extensible. Future artist or premium cosmetic packs should remain separate from chess correctness and learning access.
+
+See `THIRD_PARTY_ASSETS.md` for piece artwork attribution and licences.
 
 ## Tri-D disclaimer
 
