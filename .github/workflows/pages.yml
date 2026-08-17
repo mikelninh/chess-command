@@ -25,14 +25,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Run Chess Command tests
-        run: npm test
-      - name: JavaScript syntax checks
-        run: |
-          node --check chess-core.js
-          node --check data.js
-          node --check stockfish-bridge.js
-          node --check chess-app.js
+      - name: V1 release checks
+        run: npm run release:check
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
