@@ -3,7 +3,7 @@
 const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
 const avg=a=>a.length?a.reduce((x,y)=>x+y,0)/a.length:null;
 const normLoss=a=>{const x=avg(a);return x==null?null:clamp(Math.round(100-x/3.2),5,100)};
-function rowsFromGames(games=[],deepReviews={}){return games.flatMap(g=>{const deep=g?.id?deepReviews?.[g.id]?.rows:null;return deep?.length?deep:(g?.review?.moves||[])}).filter(r=>r&&r.side==='w')}
+function rowsFromGames(games=[],deepReviews={}){return games.flatMap(g=>{const external=g?.id?deepReviews?.[g.id]?.rows:null,embedded=g?.review?.deepRows;return external?.length?external:embedded?.length?embedded:(g?.review?.moves||[])}).filter(r=>r&&r.side==='w')}
 function keyword(s,re){return re.test(String(s||'').toLowerCase())}
 function skillScores(input={}){
  const rows=rowsFromGames(input.games,input.deepReviews),opening=[],calc=[],tactics=[],development=[],king=[],endgame=[];
