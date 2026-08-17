@@ -1,198 +1,93 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#05070d">
-  <title>Tri-D Command — Chess Opening Academy</title>
-  <meta name="description" content="A visual chess opening trainer for a beginner who wants to beat his friend — plus a playable Tri-D chess experiment inspired by Star Trek.">
-  <link rel="stylesheet" href="styles.css">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#11100e">
+<title>Chess Command — Play. Learn. Improve.</title>
+<link rel="stylesheet" href="chess-styles.css">
 </head>
-<body>
-  <div class="starfield" aria-hidden="true"></div>
-  <div id="fatalError" class="fatal-error" hidden>
-    <b>TACTICAL CORE ERROR</b>
-    <span>The board failed to initialise. Refresh once; if this persists, the runtime log has the details.</span>
-  </div>
+<body class="theme-walnut pieces-classic">
+<div class="app">
+<header class="topbar">
+  <button class="brand" data-go="play"><span class="brandmark">♞</span><span><b>CHESS COMMAND</b><small>your personal chess gym</small></span></button>
+  <nav>
+    <button class="nav active" data-go="play">Play</button>
+    <button class="nav" data-go="learn">Learn</button>
+    <button class="nav" data-go="puzzles">Puzzles</button>
+    <button class="nav" data-go="progress">Progress</button>
+    <button class="nav" data-go="themes">Themes</button>
+    <button class="nav lab-nav" data-go="lab">Lab <span>✦</span></button>
+  </nav>
+  <div class="top-actions"><span class="rating-pill">Rating <b id="ratingTop">600</b></span><button id="shareBtn" class="icon-btn" title="Share Chess Command">↗</button></div>
+</header>
 
-  <div class="app-shell">
-    <header class="command-header">
-      <div class="lcars-elbow" aria-hidden="true"><i></i><i></i><i></i></div>
-      <div class="identity">
-        <div class="delta-mark" aria-hidden="true"><span>♞</span></div>
-        <div>
-          <div class="eyebrow">CADET CHESS LAB // PERSONAL BUILD</div>
-          <h1>TRI-D COMMAND</h1>
-          <p>Learn the openings. Then leave the flat board behind.</p>
-        </div>
+<main>
+<section id="play" class="screen active">
+  <div class="hero-strip"><div><span class="eyebrow">PLAY / PRACTISE</span><h1>Play a game. Learn from the game.</h1><p>Pick a level. The board is legal chess; stronger levels use Stockfish when available.</p></div><div class="engine-state"><span id="engineDot"></span><div><small>OPPONENT ENGINE</small><b id="engineState">Practice bot ready</b></div></div></div>
+  <div class="play-grid">
+    <section class="board-column">
+      <div class="player-row opponent"><div class="avatar bot">♜</div><div><b id="opponentName">Beginner · 600</b><small id="opponentNote">Sees obvious threats, misses plenty.</small></div><div class="thinking" id="thinking"></div></div>
+      <div class="board-shell"><div id="gameBoard" class="chess-board" aria-label="Chess board"></div></div>
+      <div class="player-row"><div class="avatar you">M</div><div><b>Michael</b><small id="gameStatus">White to move.</small></div><div class="material" id="material"></div></div>
+    </section>
+    <aside class="side-panel">
+      <div class="panel-tabs"><button class="active" data-side="opponent">Opponent</button><button data-side="coach">Coach</button><button data-side="moves">Moves</button></div>
+      <div id="side-opponent" class="side-view active">
+        <div class="section-head"><div><span class="eyebrow">SELECT STRENGTH</span><h2>Who are you playing?</h2></div><span class="tiny">400 → MAX</span></div>
+        <div id="levelGrid" class="level-grid"></div>
+        <div class="engine-note"><b>Stockfish 18</b><span>At 1400+ the app attempts Stockfish strength limiting. If the engine cannot load, a local practice bot takes over automatically.</span></div>
       </div>
-      <div class="status-cluster">
-        <span><small>GOAL</small><b>BEAT MY FRIEND</b></span>
-        <span><small>RULESET</small><b>FRS 5.0 BETA</b></span>
-        <span><small>TURN</small><b id="turnTop">WHITE</b></span>
+      <div id="side-coach" class="side-view">
+        <span class="eyebrow">LIVE COACH</span><h2 id="coachTitle">Before every move</h2>
+        <div class="coach-card" id="coachText">1. Is anything hanging?<br>2. What is my opponent threatening?<br>3. Can I improve my worst piece?</div>
+        <button class="primary full" id="hintBtn">Give me a hint</button>
+        <div class="mini-rule"><b>Beginner rule</b><span>Develop pieces before launching an attack. Your queen does not need to be the main character on move 3.</span></div>
       </div>
-    </header>
-
-    <nav class="mode-rail tabs" aria-label="Application modes">
-      <button class="active" data-tab="academy"><span>01</span> OPENING ACADEMY</button>
-      <button data-tab="trid"><span>02</span> TRI-D EXPERIMENT</button>
-      <button data-tab="rules"><span>03</span> RULES / SYSTEM</button>
-      <div class="rail-segments" aria-hidden="true"><i></i><i></i><i></i></div>
-    </nav>
-
-    <main>
-      <section id="academyTab" class="tab active">
-        <div class="academy-shell">
-          <section class="academy-stage">
-            <div class="stage-kicker">
-              <div><span class="eyebrow">STANDARD CHESS // INTERACTIVE DRILL</span><strong id="academyTurn">WHITE TO MOVE</strong></div>
-              <div class="principle-strip"><span>CENTRE</span><span>DEVELOP</span><span>CASTLE</span></div>
-            </div>
-
-            <div class="academy-board-frame">
-              <div id="academyBoard" class="academy-board" aria-label="Interactive standard chess board"></div>
-              <div class="board-glow" aria-hidden="true"></div>
-            </div>
-
-            <div class="academy-controls">
-              <button id="prevOpening">← REWIND</button>
-              <button id="hintOpening">VECTOR HINT</button>
-              <button id="revealOpening">REVEAL MOVE</button>
-              <button id="resetOpening" class="quiet">RESET LINE</button>
-            </div>
-          </section>
-
-          <aside class="lesson-deck">
-            <section class="origin-log">
-              <div class="panel-label amber">WHY I BUILT THIS</div>
-              <p><b>My friend is into chess. I’m starting from scratch.</b> The plan is simple: learn the important openings well enough to finally make our games interesting — and, ideally, beat him.</p>
-              <p class="origin-foot">The Star Trek line in a job ad sent the project down a second, much stranger rabbit hole.</p>
-              <button id="goTrid" class="jump-trid">ENTER TRI-D →</button>
-            </section>
-
-            <section class="opening-picker">
-              <div class="panel-label violet">OPENING ATLAS</div>
-              <div id="openingList" class="opening-list"></div>
-            </section>
-
-            <section class="lesson-card">
-              <div class="lesson-head">
-                <span class="eyebrow">CURRENT PATTERN</span>
-                <div class="progress-shell"><i id="academyProgress"></i></div>
-              </div>
-              <h2 id="openingName">Italian Game</h2>
-              <p id="openingWhy" class="opening-why"></p>
-              <div id="openingMoves" class="opening-moves"></div>
-              <div class="insight-card">
-                <small>WHY THE NEXT MOVE EXISTS</small>
-                <p id="academyInsight"></p>
-              </div>
-              <div id="academyStatus" class="academy-status">Find the next move directly on the board.</div>
-            </section>
-          </aside>
-        </div>
-      </section>
-
-      <section id="tridTab" class="tab">
-        <div class="trid-layout">
-          <section class="scene-card">
-            <div class="scene-topbar">
-              <div>
-                <span class="eyebrow">TACTICAL VOLUME // LIVE POSITION</span>
-                <strong id="gameStatus">White to move.</strong>
-              </div>
-              <div class="view-actions">
-                <button id="topView">TOP</button>
-                <button id="heroView" class="active-view">BRIDGE</button>
-                <button id="sideView">SIDE</button>
-              </div>
-            </div>
-
-            <div class="scene" id="scene">
-              <div class="scene-hud hud-left">
-                <small>MISSION</small>
-                <b id="missionText">Free play. Select a piece to reveal legal vectors.</b>
-              </div>
-              <div class="axis axis-y">RANKS ↑</div>
-              <div class="axis axis-x">FILES →</div>
-              <div class="scene-core" aria-hidden="true"></div>
-              <div class="world" id="world"></div>
-            </div>
-
-            <div class="scene-caption">
-              <span>DRAG EMPTY SPACE TO ROTATE</span>
-              <span>CYAN = LEGAL VECTOR</span>
-              <span>THE BOARD ITSELF CAN MOVE</span>
-            </div>
-          </section>
-
-          <aside class="command-deck">
-            <div class="command-spine violet"><span>COMMAND</span></div>
-            <section class="selected-card">
-              <small>SELECTED OBJECT</small>
-              <strong id="selectedText">Nothing selected</strong>
-              <span id="selectedSub">Choose a piece or attack board.</span>
-              <p id="moveInfo"></p>
-            </section>
-
-            <div class="panel-label cyan">ATTACK BOARDS</div>
-            <div id="abList" class="ab-list"></div>
-            <div id="abActions" class="ab-actions"></div>
-
-            <div class="panel-label amber">LAST EVENT</div>
-            <div id="lastEvent" class="event-log">Opening position loaded.</div>
-          </aside>
-        </div>
-
-        <section class="tri-mission-bar">
-          <div>
-            <span class="eyebrow">FASTEST WAY TO UNDERSTAND TRI-D</span>
-            <strong>Make the battlefield move.</strong>
-          </div>
-          <button id="warpMission" class="mission-button">▶ 60-SEC WARP-PAWN MISSION</button>
-          <button id="freePlay">FREE PLAY / RESET</button>
-          <button id="undo">↶ UNDO TURN</button>
-          <button id="reset" class="ghost-reset">RESET MATCH</button>
-          <label class="toggle"><input id="rookPawn" type="checkbox" checked><span></span> rook-pawn side option</label>
-        </section>
-
-        <section class="mechanic-strip">
-          <article><span>01</span><div><b>LOOK DOWN</b><p>Pieces keep normal chess geometry in the top-down projection, but can finish on another level.</p></div></article>
-          <article><span>02</span><div><b>CHANGE LEVEL</b><p>Sliding pieces follow the highest available path through overlapping boards.</p></div></article>
-          <article><span>03</span><div><b>MOVE THE BOARD</b><p>An eligible 2×2 attack board can reposition — and can carry one of your pawns with it.</p></div></article>
-        </section>
-      </section>
-
-      <section id="rulesTab" class="tab">
-        <div class="rules-intro">
-          <span class="eyebrow">UNOFFICIAL FAN IMPLEMENTATION</span>
-          <h2>The television prop came first. The playable rules came later.</h2>
-          <p>This build follows the Federation Revised Standard 5.0 family of fan rules. It is a deterministic game-engine experiment, not an official Star Trek product.</p>
-        </div>
-        <div class="rules-grid">
-          <article><span>01</span><h3>64 squares, unusual geometry</h3><p>Three fixed 4×4 main boards plus four movable 2×2 attack boards.</p></article>
-          <article><span>02</span><h3>Projected movement</h3><p>Rooks, bishops, queens, kings and pawns keep recognisable chess geometry while traversing elevations.</p></article>
-          <article><span>03</span><h3>Movable terrain</h3><p>Moving an eligible attack board consumes a turn. A single owned pawn may ride with it.</p></article>
-          <article><span>04</span><h3>King safety</h3><p>Legal moves and attack-board actions are rejected when they leave your king exposed.</p></article>
-          <article><span>05</span><h3>Chess rules retained</h3><p>Check, checkmate, stalemate, castling, promotion and standard en passant are modelled in the beta engine.</p></article>
-          <article><span>06</span><h3>Why “beta”?</h3><p>The common rule path is playable and tested; obscure Tri-D-specific edge interactions still deserve more conformance tests.</p></article>
-        </div>
-      </section>
-    </main>
-
-    <footer class="footer-line">
-      <span>Built because my friend likes chess and a job ad made me curious.</span>
-      <span>JavaScript rules engine · CSS 3D · C#/.NET companion API · SQLite</span>
-    </footer>
+      <div id="side-moves" class="side-view"><span class="eyebrow">GAME LOG</span><h2>Moves</h2><div id="moveList" class="move-list empty">No moves yet.</div></div>
+      <div class="game-actions"><button id="newGameBtn" class="primary">New game</button><button id="undoBtn">Undo pair</button><button id="flipBtn">Flip</button><button id="resignBtn">Resign</button></div>
+    </aside>
   </div>
+</section>
 
-  <script>
-    window.addEventListener('error', function (event) {
-      console.error('Tri-D runtime error:', event.error || event.message);
-      var banner = document.getElementById('fatalError');
-      if (banner) banner.hidden = false;
-    });
-  </script>
-  <script src="bundle.js"></script>
-</body>
-</html>
+<section id="learn" class="screen">
+  <div class="hero-strip compact"><div><span class="eyebrow">LEARN / ROAD TO 1000</span><h1>Build the game in layers.</h1><p>Start with openings. Middlegame and endgame modules are already mapped into the curriculum.</p></div><div class="road"><span>600</span><i></i><span>800</span><i></i><span>1000</span></div></div>
+  <div class="learn-grid">
+    <aside class="curriculum">
+      <div class="curriculum-card done"><span>01</span><div><b>Fundamentals</b><small>Legal moves · checks · castling</small></div><em>CORE</em></div>
+      <div class="curriculum-card current"><span>02</span><div><b>Openings</b><small>Centre · development · king safety</small></div><em>NOW</em></div>
+      <div class="curriculum-card"><span>03</span><div><b>Middlegame</b><small>Forks · pins · plans · pawn structures</small></div><em>SOON</em></div>
+      <div class="curriculum-card"><span>04</span><div><b>Endgame</b><small>Basic mates · opposition · rook endings</small></div><em>SOON</em></div>
+      <div class="opening-list" id="openingList"></div>
+    </aside>
+    <section class="trainer-card">
+      <div class="trainer-copy"><span class="eyebrow">OPENING ACADEMY</span><h2 id="openingName">Italian Game</h2><p id="openingWhy"></p><div class="lesson-prompt"><small>YOUR TASK</small><b id="openingPrompt">Find move 1.</b><span id="openingNote">Control the centre.</span></div><div class="lesson-controls"><button id="openingHint">Hint</button><button id="openingReveal">Reveal move</button><button id="openingReset">Restart</button></div><div class="opening-progress"><div id="openingProgress"></div></div></div>
+      <div class="board-shell learning"><div id="learnBoard" class="chess-board"></div></div>
+    </section>
+  </div>
+</section>
+
+<section id="puzzles" class="screen">
+  <div class="hero-strip compact"><div><span class="eyebrow">PUZZLES / PATTERN RECOGNITION</span><h1>See it once. Spot it forever.</h1><p>Short tactical positions. Personal puzzles from your own games come next.</p></div><div class="stat-big"><small>PUZZLES SOLVED</small><b id="puzzleSolvedTop">0</b></div></div>
+  <div class="puzzle-grid"><section class="board-shell puzzle-shell"><div id="puzzleBoard" class="chess-board"></div></section><aside class="puzzle-panel"><div class="puzzle-rating" id="puzzleRating">450</div><span class="eyebrow" id="puzzleTheme">CHECKMATE</span><h2 id="puzzleTitle">Mate in one</h2><p id="puzzlePrompt">White to move. Find the best move.</p><div id="puzzleFeedback" class="puzzle-feedback">Look for checks, captures and threats — in that order.</div><div class="puzzle-actions"><button id="puzzleHint">Hint</button><button id="nextPuzzle" class="primary">Next puzzle</button></div></aside></div>
+</section>
+
+<section id="progress" class="screen">
+  <div class="hero-strip compact"><div><span class="eyebrow">PROGRESS / LOCAL PROFILE</span><h1>Make improvement visible.</h1><p>Your first profile lives in this browser. Accounts and cloud sync can come later.</p></div><button id="resetProgress" class="text-btn">Reset local progress</button></div>
+  <div class="progress-grid"><article class="progress-hero"><small>ESTIMATED RATING</small><b id="ratingBig">600</b><span id="ratingDelta">Start playing rated computer games.</span><div class="rating-track"><i id="ratingTrack"></i></div><div class="milestones"><span>400</span><span>800</span><span>1200</span><span>1600</span><span>2000</span></div></article><article><small>GAMES</small><b id="gamesStat">0</b><span id="recordStat">0W · 0D · 0L</span></article><article><small>OPENING REPS</small><b id="openingStat">0</b><span>Correct guided moves</span></article><article><small>PUZZLES</small><b id="puzzleStat">0</b><span>Solved positions</span></article></div>
+  <div class="next-plan"><span class="eyebrow">TODAY’S PLAN</span><h2>20 minutes is enough to start.</h2><div class="plan-steps"><div><b>1</b><span>Play one game at 600</span><em>8–12 min</em></div><div><b>2</b><span>Repeat the Italian opening</span><em>4 min</em></div><div><b>3</b><span>Solve four puzzles</span><em>4 min</em></div></div></div>
+</section>
+
+<section id="themes" class="screen">
+  <div class="hero-strip compact"><div><span class="eyebrow">THEMES / SKINS</span><h1>Make the board yours.</h1><p>The theme system is deliberately separated from chess logic so community and artist packs can live on top of the open core later.</p></div></div>
+  <div class="theme-layout"><div><h2>Board skins</h2><div class="theme-grid" id="themeGrid"><button data-theme="walnut" class="theme-card walnut active"><i></i><b>Walnut</b><span>Warm physical board</span></button><button data-theme="midnight" class="theme-card midnight"><i></i><b>Midnight</b><span>Deep blue tournament</span></button><button data-theme="jade" class="theme-card jade"><i></i><b>Jade</b><span>Calm green study</span></button><button data-theme="paper" class="theme-card paper"><i></i><b>Paper</b><span>Quiet editorial</span></button></div></div><div><h2>Piece skins</h2><div class="piece-theme-grid"><button data-pieces="classic" class="piece-skin active"><span>♞</span><b>Classic</b></button><button data-pieces="sharp" class="piece-skin"><span>♞</span><b>Sharp</b></button><button data-pieces="soft" class="piece-skin"><span>♞</span><b>Soft</b></button></div><div class="market-card"><span>COMING LATER</span><h3>Community Skin Studio</h3><p>Open theme schema + creator packs + optional paid art packs. The chess core stays independent from cosmetics.</p></div></div></div>
+</section>
+
+<section id="lab" class="screen">
+  <div class="lab-hero"><div class="lab-copy"><span class="eyebrow">LAB / EXPERIMENTAL CHESS</span><h1>Leave the flat board behind.</h1><p>Tri-D started as a curiosity from a Star Trek reference. It now lives where it belongs: the experimental wing of Chess Command.</p><div class="lab-features"><span>3 main decks</span><span>4 movable attack boards</span><span>64 squares</span><span>FRS 5.0 beta</span></div><a class="launch" href="https://mikelninh.github.io/trid-chess/" target="_blank" rel="noopener">Launch Tri-D Lab <b>↗</b></a></div><div class="lab-orbit"><div class="deck d1"></div><div class="deck d2"></div><div class="deck d3"></div><div class="orbit-piece">♞</div></div></div>
+  <div class="lab-note"><b>Why keep it?</b><span>Because it is genuinely fun, technically unusual, and a perfect place for future variants, board editors and weird-chess experiments without making the main learning app harder to use.</span></div>
+</section>
+</main>
+<footer><span>Chess Command · built to get better at chess, one game at a time.</span><span>Open core · local-first progress · Stockfish-ready · Tri-D Lab</span></footer>
+</div>
+<div id="toast" class="toast"></div>
+<script src="chess-core.js"></script><script src="data.js"></script><script src="stockfish-bridge.js"></script><script src="chess-app.js"></script>
+</body></html>
