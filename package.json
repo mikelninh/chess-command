@@ -1,13 +1,14 @@
 {
   "name": "chess-command",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
-  "description": "A mobile-first personal chess gym with adaptive coaching, Stockfish review, opening memory, personal puzzles and opponent preparation.",
+  "description": "A mobile-first personal chess gym with adaptive coaching, Stockfish review, opening memory, personal puzzles, opponent preparation and V11 deep review.",
   "scripts": {
-    "test": "node tests/chess-core.test.js && node tests/coach-core.test.js",
+    "test": "node tests/chess-core.test.js && node tests/coach-core.test.js && node tests/review-core-v11.test.js && node tests/coach-deep-v11.test.js",
     "test:chess": "node tests/chess-core.test.js",
-    "test:coach": "node tests/coach-core.test.js",
-    "check:js": "node --check chess-core.js && node --check coach-core.js && node --check data.js && node --check stockfish-bridge.js && node --check chess-app.js && node --check learning-v5.js && node --check coach-v10.js && node --check pwa-init.js && node --check piece-skin.js && node --check mobile-ui.js && node --check sw.js",
+    "test:coach": "node tests/coach-core.test.js && node tests/coach-deep-v11.test.js",
+    "test:review": "node tests/review-core-v11.test.js",
+    "check:js": "node --check chess-core.js && node --check coach-core.js && node --check review-core-v11.js && node --check data.js && node --check stockfish-bridge.js && node --check chess-app.js && node --check learning-v5.js && node --check review-v11.js && node --check coach-v10.js && node --check pwa-init.js && node --check piece-skin.js && node --check mobile-ui.js && node --check sw.js",
     "release:check": "npm test && npm run check:js"
   }
 }
