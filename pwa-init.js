@@ -1,5 +1,11 @@
 (function(){
   'use strict';
+
+  const mobile=document.createElement('link');
+  mobile.rel='stylesheet';
+  mobile.href='./mobile.css';
+  document.head.appendChild(mobile);
+
   let deferredInstall=null;
   const installBtn=document.getElementById('installBtn');
 
