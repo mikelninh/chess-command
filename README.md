@@ -12,12 +12,12 @@ A job ad mentioned Star Trek, I discovered the multi-level Tri-D chess board, an
 
 **https://mikelninh.github.io/chess-command/**
 
-## Current release — V11
+## Current release — V12
 
 ### V1 · Play
 - full legal standard chess board
 - phone-first, no-scroll Play screen
-- local SVG chess-piece set instead of platform-dependent Unicode glyphs
+- local SVG chess-piece set
 - computer opponents from beginner through 1800 / 2000 / 2200 / 2400 / 2600 / 2800 / 3000+ and MAX
 - Stockfish 18 integration for stronger levels when available
 - local practice-bot fallback
@@ -41,9 +41,8 @@ A job ad mentioned Star Trek, I discovered the multi-level Tri-D chess board, an
 
 ### V4 · Adaptive Puzzles
 - rated tactical puzzles
-- adaptive selection around your puzzle rating
+- adaptive selection around puzzle rating
 - personal puzzles generated from reviewed games
-- tactical and endgame themes
 
 ### V5 · Complete Learning Loop
 - middlegame foundations
@@ -60,42 +59,49 @@ A job ad mentioned Star Trek, I discovered the multi-level Tri-D chess board, an
 ### V7 · Adaptive Curriculum
 - builds a short daily session from due openings, personal mistakes, weakest skill and current rating
 - prioritises spaced repetition and real-game mistakes over random content
-- keeps the default session around 20 minutes
 
 ### V8 · Opponent Prep
 - creates local opponent profiles from imported PGNs
 - remembers recurring opening families
 - turns the most common opening into a prep target
-- designed for preparing against friends without uploading their games anywhere
 
 ### V9 · Long-Term Chess Memory
 - records daily games, puzzles, opening reps and study actions locally
 - seven-day activity view and training streak
-- combines rating history, review memory and puzzle/opening evidence
-- exports a portable `chess-command-memory.json` profile for future integrations
+- exports a portable `chess-command-memory.json` profile
 
 ### V10 · Personal Chess Coach
 - chooses the next best training action from measured weaknesses
-- lets the player set a target rating
-- adapts recommendations as Review, SRS and puzzle history grow
-- integrates the V6–V9 intelligence layer into Progress instead of adding another cluttered navigation tab
+- target-rating goals
+- recommendations adapt as Review, SRS and puzzle history grow
 - deterministic recommendation core is independently tested
 
 ### V11 · Deep Review
-- Stockfish MultiPV support for up to three candidate moves per analysed position
+- Stockfish MultiPV support for multiple candidate moves
 - evaluation graph across the game
-- deeper move classification and turning-point detection
-- deterministic themes such as missed mate, missed check, missed tactic, bad capture, early queen, development, king safety, calculation and endgame technique
-- candidate lines translated into SAN for easier comparison
-- one clear next action from the selected mistake
-- deep-review evidence feeds back into the V10 weakness model instead of living in an isolated screen
+- turning-point detection and mistake taxonomy
+- candidate lines translated into SAN
+- deep-review evidence feeds back into the weakness model
 - local fallback remains available when Stockfish cannot load
+
+### V12 · Tactical Gym
+- 20 curated, CI-validated starter puzzles plus personal puzzles created from your own reviewed games
+- themes: Mate, Fork, Pin, Skewer, Hanging Piece, Deflection, Removing Defender, Defense and Discovered Attack
+- short multi-move tactical lines with automatic opponent replies
+- adaptive Mixed mode biased toward weak tactical themes
+- separate puzzle rating
+- per-theme mastery tracking
+- XP, levels and rank titles
+- current streak + best streak
+- daily five-puzzle quest
+- first-try, difficulty, streak and daily-completion XP bonuses
+- achievements and milestone unlocks
+- mobile-first, one-viewport Tactical Gym with horizontal theme selection and tap-friendly controls
+- offline/PWA cache includes the full V12 gym
 
 ## Mobile / PWA
 
-Play is deliberately a one-screen mobile experience: opponent row → board → player row → compact actions → bottom navigation. Opponent strength, Coach and Moves open as a bottom sheet instead of forcing the board off screen.
-
-Learn, Review and Progress can scroll because they contain study material; the live game itself should not require scrolling.
+**Play** and **Puzzles** are deliberately designed as one-screen mobile experiences. The board stays visible while essential actions remain reachable with one thumb. Longer study surfaces such as Learn, Review and Progress may scroll because they contain actual study material.
 
 The PWA supports home-screen installation, offline access to the core app and automatic refresh when a new service-worker build activates.
 
@@ -119,9 +125,12 @@ Browser / PWA
 │   ├── Opening Academy + SRS
 │   ├── Middlegame foundations
 │   └── Endgame foundations
-├── Puzzles
-│   ├── adaptive puzzle rating
-│   └── personal positions
+├── Tactical Gym / V12
+│   ├── curated + personal puzzle bank
+│   ├── adaptive theme selection
+│   ├── puzzle Elo
+│   ├── XP / levels / streaks / quests
+│   └── per-theme mastery
 ├── Intelligence
 │   ├── weakness model
 │   ├── adaptive curriculum
@@ -133,7 +142,7 @@ Browser / PWA
 └── service worker / offline shell
 ```
 
-Chess truth stays deterministic. An LLM is not required for legal moves, engine evaluation, puzzle validation, mistake taxonomy or the recommendation core. Richer natural-language coaching can be layered on later without becoming the source of truth.
+Chess truth stays deterministic. An LLM is not required for legal moves, engine evaluation, puzzle validation, mistake taxonomy or the recommendation core.
 
 ## Run locally
 
@@ -151,32 +160,34 @@ The release gate checks:
 - V5 queen-mate, rook-mate and promotion drills
 - V10 weakness scoring, adaptive priorities, opponent summaries and streak memory
 - V11 loss classes, tactical themes, review priority and deep-review → coach integration
-- JavaScript syntax across the game, Stockfish bridge, mobile/PWA, V5, V10 and V11 modules
+- all V12 curated tactical lines are legal from their supplied FENs
+- V12 theme coverage, XP, rating and mastery behaviour
+- JavaScript syntax across the game, Stockfish bridge, mobile/PWA and V5–V12 modules
 
 ```bash
 npm run release:check
 ```
 
-## What V11 is — and is not
+## What V12 is — and is not
 
-V11 is a fast-moving, local-first product prototype with a complete personal-learning loop and a significantly deeper review layer. It is still not the production depth of a mature chess platform: the puzzle corpus is small, engine calibration needs real games, the curriculum needs much more content, and the low-Elo bots still need more human-like behaviour.
+V12 is a fast-moving local-first product prototype with a complete play → review → diagnose → train loop and a genuinely usable Tactical Gym. It is still not the production depth of a mature chess platform: the puzzle bank is intentionally small compared with large chess services, engine calibration needs real games, the curriculum needs much more content, and low-Elo bots still need more human-like behaviour.
 
-The next phase remains depth, quality and real-user learning evidence rather than adding navigation for its own sake.
+The next versions should deepen content and real learning quality rather than adding navigation for its own sake.
 
-## V12+
+## V13+
 
-1. larger curated puzzle corpus and tactical-theme mastery
-2. richer middlegame curriculum: pins, skewers, pawn structures, planning, prophylaxis
-3. richer endgame curriculum: opposition, pawn races, Lucena, Philidor
-4. calibrated skill estimates from many real games
-5. stronger human-like computer personalities at low and intermediate Elo
-6. opening explorer and repertoire tree
-7. optional cloud sync and accounts
-8. friend challenges and multiplayer
-9. creator-friendly skin specification and community theme packs
-10. richer coach explanations grounded in deterministic engine output
-11. deeper opponent modelling
-12. deeper Tri-D Lab and other experimental variants
+1. hundreds/thousands of licensed or generated-and-verified tactical positions
+2. puzzle rush / timed survival mode
+3. richer middlegame curriculum: pins, skewers, pawn structures, planning, prophylaxis
+4. richer endgame curriculum: opposition, pawn races, Lucena, Philidor
+5. calibrated skill estimates from many real games
+6. stronger human-like computer personalities at low and intermediate Elo
+7. opening explorer and repertoire tree
+8. optional cloud sync and accounts
+9. friend challenges and multiplayer
+10. creator-friendly skin specification and community theme packs
+11. richer coach explanations grounded in deterministic engine output
+12. deeper opponent modelling and Tri-D Lab
 
 ## Open-source direction
 
