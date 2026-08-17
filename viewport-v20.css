@@ -1,4 +1,6 @@
 /* V20 layout guard: Play and Puzzles are viewport apps, not long documents. */
+.v12-actions button{border:1px solid var(--line);background:var(--panel2);color:var(--text);border-radius:10px;font-weight:800}
+.v12-actions button:disabled{background:var(--panel2);color:var(--muted);opacity:.55}
 @media (min-width:761px){
   /* Mobile-only runtime controls must never leak into desktop. */
   .mobile-gamebar,.sheet-close,.sheet-backdrop{display:none!important}
