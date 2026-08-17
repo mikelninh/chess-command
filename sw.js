@@ -1,12 +1,14 @@
-const CACHE='chess-command-v1';
+const CACHE='chess-command-v2';
 const CORE=[
   './',
   './index.html',
   './chess-styles.css',
+  './mobile.css',
   './chess-core.js',
   './data.js',
   './stockfish-bridge.js',
   './chess-app.js',
+  './pwa-init.js',
   './manifest.webmanifest',
   './chess-command-icon.svg'
 ];
@@ -27,7 +29,7 @@ self.addEventListener('fetch',event=>{
   if(req.method!=='GET')return;
   const url=new URL(req.url);
 
-  // Keep third-party engine loading network-first; the local practice bot remains the offline fallback.
+  // Stockfish is network-first; if unavailable, Chess Command already has a local offline opponent fallback.
   if(url.origin!==self.location.origin){
     event.respondWith(fetch(req).catch(()=>new Response('',{status:503,statusText:'Offline'})));
     return;
