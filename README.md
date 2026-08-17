@@ -1,59 +1,83 @@
-# Tri-D Command
+# Chess Command
 
-> One of my best friends is really into chess. I’m learning from scratch and wanted a visual way to understand the important openings. Then a job ad mentioned Star Trek, I discovered Tri-D chess, and curiosity did the rest.
+> A free, mobile-first personal chess gym: play, learn, solve puzzles, track progress, customise the board, and grow from beginner to serious chess. Tri-D lives in the Lab as the strange bonus experiment that started this journey.
 
-**Tri-D Command** is two things in one:
+## Why I built it
 
-1. an interactive opening academy for learning standard chess by playing the moves on a real board and understanding why they exist;
-2. an experimental playable Tri-D chess mode inspired by the multi-level board seen in Star Trek and the community-developed Federation Standard / Federation Revised Standard rules.
+One of my best friends is really into chess. I wanted to start properly from scratch, understand the important openings, practise against a computer at increasingly difficult levels, and eventually give him a much harder game.
+
+A job ad mentioned Star Trek, I discovered the multi-level Tri-D chess board, and curiosity added an experimental Lab mode along the way.
 
 ## Demo
 
-**https://mikelninh.github.io/trid-command/**
+**https://mikelninh.github.io/chess-command/**
 
-### Preview
+## What works today
 
-![Opening Academy](assets/opening-academy.png)
+### Play
+- full legal standard chess board
+- mobile-first tap controls
+- computer opponents from beginner levels through 1800 / 2000 / 2200 / 2400 / 2600 / 2800 / 3000+ and MAX
+- Stockfish 18 integration for stronger levels when available
+- local practice-bot fallback
+- undo, flip, resign, move log and material display
+- lightweight local rating progression
 
-![Tri-D Experiment](assets/trid-experiment.png)
+### Learn
+- interactive Opening Academy
+- play the moves yourself instead of watching an animation
+- opening principles and move explanations
+- hints, reveal and restart
+- curriculum structure ready for middlegame and endgame modules
 
-## Opening Academy
+### Puzzles
+- playable tactical positions
+- puzzle rating, theme, hints and explanations
+- local solved-puzzle progress
+- personal puzzles generated from your own games are on the roadmap
 
-- full 8×8 board and all 32 pieces
-- 16 important classical / hypermodern opening families
-- click-to-play training rather than passive animation
-- hints, reveal, rewind and reset
-- explanation of why the next move exists
-- visual progress through each line
+### Progress
+- local-first profile
+- games / W-D-L
+- estimated rating
+- opening repetitions
+- puzzle count
+- daily training plan
 
-## Tri-D Experiment
+### Themes
+- multiple board skins
+- multiple piece styles
+- theme system separated from chess logic
+- designed so community / artist skin packs can be added later
 
-- three fixed 4×4 main boards
-- four movable 2×2 attack boards
-- 64 playable squares total
-- projected multi-level movement
-- highest-path / alternate-path validation
-- attack-board movement, inversion and ownership
-- pawn transport on attack boards
-- check, checkmate and stalemate
-- castling, promotion and standard en passant
-- king-safety validation for piece and board moves
-- optional rook-pawn side movement
-- draggable 3D camera with top / bridge / side presets
-- a 60-second Warp-Pawn mission demonstrating the strangest mechanic: **the board itself can move**
+### Lab
+Tri-D chess remains as an experimental mode rather than defining the main product. The existing Tri-D engine models three fixed 4×4 main boards, four movable 2×2 attack boards, multi-level projected movement, attack-board movement and pawn transport.
 
-The Tri-D engine is deliberately labelled **FRS 5.0 Beta**. The common gameplay path works and is tested; obscure interactions in a community-developed ruleset still deserve more conformance testing before claiming completeness.
+## Mobile / PWA
+Chess Command is designed to be playable on a phone: responsive board sizing, touch-sized controls, mobile navigation, safe-area support and a progressive-web-app shell for home-screen installation and offline access to the core app.
 
-## Stack
+## Architecture
 
-- HTML / CSS / vanilla JavaScript
-- deterministic Tri-D rules engine
-- CSS 3D scene — no WebGL dependency
-- Node-based engine tests
-- ASP.NET Core companion API
-- SQLite session / progress storage
+```text
+Browser / PWA
+├── Chess Command UI
+│   ├── Play
+│   ├── Learn
+│   ├── Puzzles
+│   ├── Progress
+│   ├── Themes
+│   └── Lab
+├── deterministic standard-chess core
+├── Stockfish bridge
+├── local practice-bot fallback
+├── localStorage profile
+└── service worker / offline shell
 
-The game rules do not depend on an LLM.
+Optional companion API
+└── ASP.NET Core + SQLite
+```
+
+Chess truth stays deterministic. An LLM is not required for legal moves, engine evaluation or puzzle validation; AI explanations can be layered on later without becoming the source of truth.
 
 ## Run locally
 
@@ -62,46 +86,31 @@ python -m http.server 8080
 # open http://localhost:8080
 ```
 
-Build and test:
+## Tests
+
+The standard chess core includes initial-position perft checks and targeted rules tests, including castling, en passant, checkmate and opening-line behaviour.
 
 ```bash
-npm run build
 npm test
 ```
 
-Optional .NET API:
+## Roadmap
+1. installable PWA + offline practice
+2. hardened Stockfish Web Worker integration
+3. post-game engine review
+4. spaced-repetition Opening Academy
+5. adaptive puzzle training
+6. middlegame curriculum
+7. endgame curriculum
+8. personal weakness model
+9. PGN import / export and friend preparation
+10. optional accounts + cloud sync
+11. creator-friendly skin specification
+12. multiplayer / challenge links
+13. deeper Tri-D Lab integration
 
-```bash
-cd api/TriDCommand.Api
-dotnet restore
-dotnet run
-```
+## Open-source direction
+The intention is to keep the core learning/game project open and make themes extensible. Future artist or premium cosmetic packs should remain separate from chess correctness and learning access.
 
-## Project structure
-
-```text
-.
-├── index.html
-├── styles.css
-├── bundle.js
-├── src/
-│   ├── engine.js
-│   ├── openings.js
-│   └── app.js
-├── tests/
-│   └── engine.test.js
-├── scripts/
-│   └── build.mjs
-├── api/
-│   └── TriDCommand.Api/
-└── .github/workflows/
-    └── pages.yml
-```
-
-## Rules lineage
-
-The Star Trek television prop did not ship with a complete canonical on-screen ruleset. This project follows the community-developed Federation Standard / Federation Revised Standard lineage associated with Andrew Bartmess and later clarifications. It is an unofficial fan implementation.
-
-## Disclaimer
-
-Unofficial fan project. Star Trek and related marks belong to their respective owners. No affiliation with Paramount or CBS is implied.
+## Tri-D disclaimer
+The Tri-D experiment is an unofficial fan implementation. Star Trek and related marks belong to their respective owners. No affiliation with Paramount or CBS is implied.
