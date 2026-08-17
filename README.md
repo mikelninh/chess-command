@@ -1,6 +1,6 @@
 # Chess Command
 
-> A free, mobile-first personal chess gym: play, review, learn, solve puzzles, track progress, prepare for friends, and grow from beginner to serious chess. Tri-D lives in the Lab as the strange bonus experiment that started this journey.
+> A free, mobile-first personal chess gym: play, review, learn openings, solve tactical puzzles, track progress, prepare for friends, and grow from beginner to serious chess. Tri-D lives in the Lab as the strange bonus experiment that started this journey.
 
 ## Why I built it
 
@@ -12,96 +12,77 @@ A job ad mentioned Star Trek, I discovered the multi-level Tri-D chess board, an
 
 **https://mikelninh.github.io/chess-command/**
 
-## Current release — V12
+## Current release — V15
 
 ### V1 · Play
 - full legal standard chess board
 - phone-first, no-scroll Play screen
-- local SVG chess-piece set
+- local SVG chess pieces
 - computer opponents from beginner through 1800 / 2000 / 2200 / 2400 / 2600 / 2800 / 3000+ and MAX
 - Stockfish 18 integration for stronger levels when available
 - local practice-bot fallback
 - undo, flip, resign, move log and material display
-- lightweight local rating progression
+- local rating progression
 - installable PWA and offline core app
 
-### V2 · Game Review
-- saves completed games locally
-- Stockfish position analysis with deterministic fallback
-- Best / Excellent / Good / Inaccuracy / Mistake / Blunder classifications
-- approximate accuracy from centipawn loss
-- opening recognition and coaching notes
-- mistakes become personal practice positions
-
-### V3 · Opening Memory
-- interactive Opening Academy
-- hints, explanations and restart
-- spaced repetition for individual opening positions
-- due queue, mastery percentage and weakest-pattern view
-
-### V4 · Adaptive Puzzles
-- rated tactical puzzles
-- adaptive selection around puzzle rating
-- personal puzzles generated from reviewed games
-
-### V5 · Complete Learning Loop
-- middlegame foundations
-- endgame foundations
-- SAN notation
-- PGN export / copy / import
+### V2–V5 · Learning loop
+- Game Review with engine evaluation and mistake → personal puzzle conversion
+- Opening Academy with hints, explanations and spaced repetition
+- adaptive tactical puzzles and personal positions
+- middlegame / endgame foundations
+- SAN + PGN import/export
 - adaptive next-training recommendation
 
-### V6 · Weakness Model
-- derives a skill profile from reviewed moves and training results
-- tracks Opening Memory, Tactics, Calculation, Development, King Safety and Endgame
-- records evidence/confidence rather than pretending to know the player after one game
-
-### V7 · Adaptive Curriculum
-- builds a short daily session from due openings, personal mistakes, weakest skill and current rating
-- prioritises spaced repetition and real-game mistakes over random content
-
-### V8 · Opponent Prep
-- creates local opponent profiles from imported PGNs
-- remembers recurring opening families
-- turns the most common opening into a prep target
-
-### V9 · Long-Term Chess Memory
-- records daily games, puzzles, opening reps and study actions locally
-- seven-day activity view and training streak
-- exports a portable `chess-command-memory.json` profile
-
-### V10 · Personal Chess Coach
-- chooses the next best training action from measured weaknesses
-- target-rating goals
-- recommendations adapt as Review, SRS and puzzle history grow
-- deterministic recommendation core is independently tested
+### V6–V10 · Personal chess intelligence
+- weakness model: Opening, Tactics, Calculation, Development, King Safety and Endgame
+- evidence/confidence tracking
+- adaptive daily curriculum
+- opponent profiles from imported PGNs
+- long-term local training memory
+- target-rating goals and next-best-action coach
 
 ### V11 · Deep Review
-- Stockfish MultiPV support for multiple candidate moves
-- evaluation graph across the game
-- turning-point detection and mistake taxonomy
-- candidate lines translated into SAN
-- deep-review evidence feeds back into the weakness model
-- local fallback remains available when Stockfish cannot load
+- Stockfish MultiPV candidate moves
+- evaluation graph
+- turning-point detection
+- deterministic mistake taxonomy
+- candidate lines in SAN
+- Deep Review feeds evidence back into the weakness model
 
 ### V12 · Tactical Gym
-- 20 curated, CI-validated starter puzzles plus personal puzzles created from your own reviewed games
-- themes: Mate, Fork, Pin, Skewer, Hanging Piece, Deflection, Removing Defender, Defense and Discovered Attack
-- short multi-move tactical lines with automatic opponent replies
-- adaptive Mixed mode biased toward weak tactical themes
-- separate puzzle rating
-- per-theme mastery tracking
-- XP, levels and rank titles
-- current streak + best streak
-- daily five-puzzle quest
-- first-try, difficulty, streak and daily-completion XP bonuses
-- achievements and milestone unlocks
-- mobile-first, one-viewport Tactical Gym with horizontal theme selection and tap-friendly controls
-- offline/PWA cache includes the full V12 gym
+- curated tactical puzzle bank + personal puzzles from reviewed games
+- Mate, Fork, Pin, Skewer, Hanging Piece, Deflection, Removing Defender, Defense and Discovered Attack
+- puzzle rating, theme mastery, XP, levels, streaks, daily quest and achievements
+- one-screen mobile Tactical Gym
+
+### V13 · Game Feel
+- drag-to-move alongside tap-to-move
+- lightweight Web Audio move / capture / check / success feedback
+- optional haptic feedback where the browser supports it
+- check, capture and victory board feedback
+- game-feel toggle in the app shell
+
+### V14 · Opening Lab
+- mobile repertoire dashboard over the existing Opening Academy
+- per-opening mastery from real attempts
+- weakest-line drilling
+- spaced-repetition due count
+- Memory Mode hides explanatory copy until needed
+- focused beginner repertoire map for White, Black vs e4 and Black vs d4
+
+### V15 · Solo Training Release
+- **80 CI-validated offline tactical positions** generated from the curated tactical set through legality-preserving board symmetries
+- Adaptive, **Sprint 3:00**, **Survival** and **Daily 5** puzzle modes
+- global progression across puzzles, openings, games and Deep Review
+- global XP / levels / rank titles
+- daily missions and milestone achievements
+- Road to 1000 rating view
+- V15 layers are cached by the PWA for offline use
+- multiplayer deliberately postponed: V15 focuses on making the solo learning loop excellent first
 
 ## Mobile / PWA
 
-**Play** and **Puzzles** are deliberately designed as one-screen mobile experiences. The board stays visible while essential actions remain reachable with one thumb. Longer study surfaces such as Learn, Review and Progress may scroll because they contain actual study material.
+**Play** and **Puzzles** are deliberately designed as one-screen mobile experiences. The board stays visible while essential actions remain reachable with one thumb. Longer study surfaces such as Learn, Review and Progress can scroll because they contain actual study material.
 
 The PWA supports home-screen installation, offline access to the core app and automatic refresh when a new service-worker build activates.
 
@@ -111,38 +92,41 @@ The PWA supports home-screen installation, offline access to the core app and au
 Browser / PWA
 ├── Play
 │   ├── deterministic chess core
-│   ├── local SVG piece renderer
 │   ├── Stockfish bridge
-│   └── local practice-bot fallback
+│   ├── local practice-bot fallback
+│   └── V13 game-feel layer
 ├── Review
-│   ├── V2 fast review
-│   └── V11 deep review
-│       ├── MultiPV candidate lines
-│       ├── evaluation graph
-│       ├── mistake taxonomy
-│       └── coach evidence
+│   ├── fast review
+│   └── V11 Deep Review / MultiPV / taxonomy
 ├── Learn
 │   ├── Opening Academy + SRS
+│   ├── V14 Opening Lab / mastery / memory mode
 │   ├── Middlegame foundations
 │   └── Endgame foundations
-├── Tactical Gym / V12
-│   ├── curated + personal puzzle bank
-│   ├── adaptive theme selection
-│   ├── puzzle Elo
-│   ├── XP / levels / streaks / quests
-│   └── per-theme mastery
+├── Tactical Gym
+│   ├── curated tactical seeds
+│   ├── V15 symmetry-expanded offline pack
+│   ├── personal puzzles from your games
+│   ├── Adaptive / Sprint / Survival / Daily 5
+│   ├── puzzle Elo + theme mastery
+│   └── tactical XP / streaks
 ├── Intelligence
 │   ├── weakness model
 │   ├── adaptive curriculum
 │   ├── opponent preparation
-│   ├── long-term local memory
+│   ├── long-term memory
 │   └── personal coach
+├── V15 Player Journey
+│   ├── global XP + ranks
+│   ├── daily missions
+│   ├── milestones
+│   └── Road to 1000
 ├── Themes
 ├── Tri-D Lab
 └── service worker / offline shell
 ```
 
-Chess truth stays deterministic. An LLM is not required for legal moves, engine evaluation, puzzle validation, mistake taxonomy or the recommendation core.
+Chess truth stays deterministic. An LLM is not required for legal moves, engine evaluation, puzzle validation, mistake taxonomy or recommendation logic.
 
 ## Run locally
 
@@ -157,37 +141,28 @@ The release gate checks:
 - initial-position perft 20 / 400 / 8902
 - castling, en passant and checkmate
 - SAN and PGN round-trip
-- V5 queen-mate, rook-mate and promotion drills
-- V10 weakness scoring, adaptive priorities, opponent summaries and streak memory
-- V11 loss classes, tactical themes, review priority and deep-review → coach integration
-- all V12 curated tactical lines are legal from their supplied FENs
-- V12 theme coverage, XP, rating and mastery behaviour
-- JavaScript syntax across the game, Stockfish bridge, mobile/PWA and V5–V12 modules
+- V5 endgame drills
+- V10 weakness scoring and adaptive priorities
+- V11 review taxonomy and Deep Review → Coach integration
+- all V12 curated tactical lines are legal
+- **all V15 transformed tactical lines are legal from their transformed FENs**
+- JavaScript syntax across the game, review, puzzles, opening lab, game-feel, progression, mobile and PWA modules
 
 ```bash
 npm run release:check
 ```
 
-## What V12 is — and is not
+## What V15 is — and is not
 
-V12 is a fast-moving local-first product prototype with a complete play → review → diagnose → train loop and a genuinely usable Tactical Gym. It is still not the production depth of a mature chess platform: the puzzle bank is intentionally small compared with large chess services, engine calibration needs real games, the curriculum needs much more content, and low-Elo bots still need more human-like behaviour.
+V15 is a strong local-first solo chess-training prototype. It now has a coherent loop from play → review → diagnose → puzzles/opening practice → progression → play again, with a substantially better mobile experience.
 
-The next versions should deepen content and real learning quality rather than adding navigation for its own sake.
+It is still not a mature chess platform. The biggest remaining gaps are content scale, deeper opening data, richer middlegame/endgame curriculum, more human-like low-Elo bots, production-grade calibration, accounts/cloud sync and eventually multiplayer.
 
-## V13+
+The next work should deepen those areas rather than add navigation for its own sake.
 
-1. hundreds/thousands of licensed or generated-and-verified tactical positions
-2. puzzle rush / timed survival mode
-3. richer middlegame curriculum: pins, skewers, pawn structures, planning, prophylaxis
-4. richer endgame curriculum: opposition, pawn races, Lucena, Philidor
-5. calibrated skill estimates from many real games
-6. stronger human-like computer personalities at low and intermediate Elo
-7. opening explorer and repertoire tree
-8. optional cloud sync and accounts
-9. friend challenges and multiplayer
-10. creator-friendly skin specification and community theme packs
-11. richer coach explanations grounded in deterministic engine output
-12. deeper opponent modelling and Tri-D Lab
+## Open puzzle / content direction
+
+The puzzle provider is intentionally separable from the Tactical Gym UI. This lets the project later ingest a much larger open puzzle corpus while keeping a fast offline seed pack and personal puzzles generated from the player's own games.
 
 ## Open-source direction
 
