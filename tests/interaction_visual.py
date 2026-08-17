@@ -12,6 +12,8 @@ def wait(d,x,n=180):
  raise AssertionError('wait failed: '+x)
 
 def square(d,name):return d.find_element('css selector',f'#v12PuzzleBoard .square[data-square="{name}"]')
+def pointer_drag(d,board_id,fr,to,pid):
+ return d.execute_script("""const board=document.getElementById(arguments[0]),from=arguments[1],to=arguments[2],pid=arguments[3],a=board.querySelector(`.square[data-square="${from}"]`),b=board.querySelector(`.square[data-square="${to}"]`),ar=a.getBoundingClientRect(),br=b.getBoundingClientRect(),ax=ar.left+ar.width/2,ay=ar.top+ar.height/2,bx=br.left+br.width/2,by=br.top+br.height/2,opt=(type,x,y)=>({bubbles:true,cancelable:true,pointerId:pid,pointerType:'mouse',button:0,buttons:type==='pointerup'?0:1,clientX:x,clientY:y});a.dispatchEvent(new PointerEvent('pointerdown',opt('pointerdown',ax,ay)));document.dispatchEvent(new PointerEvent('pointermove',opt('pointermove',bx,by)));document.dispatchEvent(new PointerEvent('pointerup',opt('pointerup',bx,by)));return [from,to];""",board_id,fr,to,pid)
 
 s=subprocess.Popen([sys.executable,'-m','http.server',str(P),'--bind','127.0.0.1'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
 d=None
@@ -24,7 +26,11 @@ try:
  for a in ['--headless=new','--no-sandbox','--disable-gpu','--disable-dev-shm-usage','--disable-extensions','--disable-background-networking','--disable-sync','--no-first-run']:o.add_argument(a)
  d=webdriver.Chrome(options=o);d.set_page_load_timeout(10);d.set_script_timeout(8);d.execute_cdp_cmd('Emulation.setDeviceMetricsOverride',{'width':1366,'height':768,'deviceScaleFactor':1,'mobile':False,'screenWidth':1366,'screenHeight':768})
  d.get(f'http://127.0.0.1:{P}/index.html?visual-test=1&interaction=1&t={time.time_ns()}')
- wait(d,"window.ChessPuzzleViewV12&&window.ChessPieceSkins&&document.getElementById('v12PuzzleBoard')")
+ wait(d,"window.ChessPuzzleViewV12&&window.ChessPieceSkins&&document.getElementById('gameBoard')?.children.length===64")
+ # Primary Play surface: a real pointer drag must move e2 -> e4.
+ pointer_drag(d,'gameBoard','e2','e4',61)
+ wait(d,"!document.querySelector('#gameBoard .square[data-square=\"e2\"] .piece')&&document.querySelector('#gameBoard .square[data-square=\"e4\"] .piece.white')")
+ print('Play drag interaction PASS e2-e4',flush=True)
  d.execute_script("document.querySelector('[data-go=\"puzzles\"]')?.click()")
  wait(d,"document.getElementById('v12PuzzleBoard')?.children.length===64")
  # Wrong-side feedback must explicitly tell the solver which colour they own.
@@ -42,7 +48,7 @@ try:
  d.execute_script("document.getElementById('v12Skip').click()")
  wait(d,'window.ChessPuzzleViewV12.step()===0')
  uci=d.execute_script('return window.ChessPuzzleViewV12.expected()')
- result=d.execute_script("""const from=arguments[0],to=arguments[1],a=document.querySelector(`#v12PuzzleBoard .square[data-square="${from}"]`),b=document.querySelector(`#v12PuzzleBoard .square[data-square="${to}"]`),ar=a.getBoundingClientRect(),br=b.getBoundingClientRect(),ax=ar.left+ar.width/2,ay=ar.top+ar.height/2,bx=br.left+br.width/2,by=br.top+br.height/2,opt=(type,x,y)=>({bubbles:true,cancelable:true,pointerId:77,pointerType:'mouse',button:0,buttons:type==='pointerup'?0:1,clientX:x,clientY:y});a.dispatchEvent(new PointerEvent('pointerdown',opt('pointerdown',ax,ay)));document.dispatchEvent(new PointerEvent('pointermove',opt('pointermove',bx,by)));document.dispatchEvent(new PointerEvent('pointerup',opt('pointerup',bx,by)));return [from,to];""",uci[:2],uci[2:4])
+ result=pointer_drag(d,'v12PuzzleBoard',uci[:2],uci[2:4],77)
  wait(d,'window.ChessPuzzleViewV12.step()>0')
  print('Puzzle drag interaction PASS '+str(result),flush=True)
  # All premium skins must be selectable and load real artwork.
