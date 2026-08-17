@@ -10,8 +10,11 @@ SERVER=$!
 trap 'kill "$SERVER" >/dev/null 2>&1 || true' EXIT
 sleep .5
 run_viewport(){
-  local size="$1" name="$2" out="/tmp/chess-command-${name}.html"
-  "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-background-networking --window-size="$size" --virtual-time-budget=9000 --dump-dom "http://127.0.0.1:${PORT}/tests/mobile-puzzle-visual.html" >"$out" 2>/tmp/chess-command-${name}.chrome.log || { cat /tmp/chess-command-${name}.chrome.log; return 1; }
+  local size="$1"
+  local name="$2"
+  local out="/tmp/chess-command-${name}.html"
+  local log="/tmp/chess-command-${name}.chrome.log"
+  "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-background-networking --window-size="$size" --virtual-time-budget=9000 --dump-dom "http://127.0.0.1:${PORT}/tests/mobile-puzzle-visual.html" >"$out" 2>"$log" || { cat "$log"; return 1; }
   if ! grep -q 'data-result="PASS"' "$out"; then echo "Mobile visual smoke failed at ${size}" >&2; grep -o '<pre id="result">[^<]*' "$out" || true; return 1; fi
   echo "Mobile visual smoke passed at ${size}."
 }
