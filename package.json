@@ -1,6 +1,6 @@
 {
   "name": "chess-command",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "private": true,
   "description": "A mobile-first personal chess gym with a 3,000-puzzle tactical corpus, adaptive training, premium game feel, Stockfish review and progression.",
   "scripts": {
@@ -9,7 +9,8 @@
     "test:coach": "node tests/coach-core.test.js && node tests/coach-deep-v11.test.js",
     "test:review": "node tests/review-core-v11.test.js",
     "test:puzzles": "node tests/puzzle-v12.test.js && node tests/puzzle-pack-v15.test.js && node tests/puzzle-pack-v16.test.js",
+    "test:mobile": "bash tests/mobile-visual-smoke.sh",
     "check:js": "node --check chess-core.js && node --check coach-core.js && node --check review-core-v11.js && node --check puzzle-core-v12.js && node --check puzzle-pack-v15.js && node --check puzzle-pack-lichess-v16.js && node --check puzzle-provider-v16.js && node --check data.js && node --check stockfish-bridge.js && node --check chess-app.js && node --check learning-v5.js && node --check review-v11.js && node --check coach-v10.js && node --check puzzle-v12.js && node --check puzzle-modes-v18.js && node --check puzzle-mobile-v12.js && node --check opening-v14.js && node --check gamefeel-v17.js && node --check progress-v18.js && node --check pwa-init.js && node --check piece-skin.js && node --check mobile-ui.js && node --check sw.js",
-    "release:check": "npm test && npm run check:js"
+    "release:check": "npm test && npm run check:js && npm run test:mobile"
   }
 }
