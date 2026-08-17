@@ -12,10 +12,11 @@ permissions:
 jobs:
   release-check:
     runs-on: ubuntu-latest
+    timeout-minutes: 2
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: V1 release checks
+      - name: Chess Command release checks
         run: npm run release:check
