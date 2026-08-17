@@ -10,8 +10,9 @@
 
   let deferredInstall=null,refreshing=false;
   const installBtn=document.getElementById('installBtn');
+  const visualTest=new URLSearchParams(location.search).has('visual-test');
 
-  if('serviceWorker' in navigator){
+  if(!visualTest&&'serviceWorker' in navigator){
     navigator.serviceWorker.addEventListener('controllerchange',()=>{
       if(refreshing)return;refreshing=true;location.reload();
     });
