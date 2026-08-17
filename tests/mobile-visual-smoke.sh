@@ -14,7 +14,7 @@ run_viewport(){
   local name="$2"
   local out="/tmp/chess-command-${name}.html"
   local log="/tmp/chess-command-${name}.chrome.log"
-  "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-background-networking --window-size="$size" --virtual-time-budget=9000 --dump-dom "http://127.0.0.1:${PORT}/tests/mobile-puzzle-visual.html" >"$out" 2>"$log" || { cat "$log"; return 1; }
+  timeout 20s "$CHROME" --headless=new --no-sandbox --disable-gpu --disable-background-networking --window-size="$size" --virtual-time-budget=7000 --dump-dom "http://127.0.0.1:${PORT}/tests/mobile-puzzle-visual.html" >"$out" 2>"$log" || { echo "Chrome visual run failed/timed out at ${size}" >&2; cat "$log"; return 1; }
   if ! grep -q 'data-result="PASS"' "$out"; then echo "Mobile visual smoke failed at ${size}" >&2; grep -o '<pre id="result">[^<]*' "$out" || true; return 1; fi
   echo "Mobile visual smoke passed at ${size}."
 }
