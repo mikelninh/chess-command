@@ -12,13 +12,51 @@ function pulse(cls,ms=420){const shell=document.querySelector('#play .board-shel
 function addToggle(){const actions=document.querySelector('.top-actions');if(!actions||document.getElementById('feelToggle'))return;const b=document.createElement('button');b.id='feelToggle';b.className='icon-btn';b.title='Sound & haptics';b.textContent=S.sound?'♪':'×';b.onclick=()=>{S.sound=!S.sound;S.haptics=S.sound;save();b.textContent=S.sound?'♪':'×';if(S.sound){tone(620,.05,.04);buzz(12)}};actions.insertBefore(b,actions.firstChild)}
 let lastPieces=32;
 document.addEventListener('cc:move',e=>{const n=piecesInFen(e.detail.fen),capture=n<lastPieces;lastPieces=n;let st=null;try{st=C?.status(C.fromFEN(e.detail.fen))}catch{}if(st?.check){tone(760,.06,.05,'triangle');setTimeout(()=>tone(520,.05,.035,'triangle'),65);buzz([18,20,28]);pulse('cc-check-flash',520)}else if(capture){tone(230,.05,.05,'square');buzz(16);pulse('cc-capture-pulse',260)}else{tone(e.detail.side==='w'?470:390,.03,.025);buzz(7)}});
-document.addEventListener('cc:newgame',()=>{lastPieces=32});
+document.addEventListener('cc:newgame',()=>{lastPieces=32;cancelDrag()});
 document.addEventListener('cc:gameover',e=>{if(e.detail.score===1){tone(523,.08,.05);setTimeout(()=>tone(659,.08,.05),90);setTimeout(()=>tone(784,.13,.05),180);buzz([30,35,60]);pulse('cc-win-glow',1200)}else{tone(240,.12,.04,'triangle');buzz(25)}});
 document.addEventListener('cc:puzzle',e=>{if(e.detail.correct){tone(660,.05,.035);setTimeout(()=>tone(880,.06,.03),55);buzz(10)}else{tone(180,.05,.025,'square');buzz(18)}});
-function dragStart(e){if(e.button!==undefined&&e.button!==0)return;const sq=e.target.closest('.square'),board=e.target.closest('.chess-board');if(!sq||!board||!sq.querySelector('.piece'))return;const r=sq.getBoundingClientRect(),ghost=sq.querySelector('.piece').cloneNode(true);ghost.classList.add('cc-drag-ghost');document.body.appendChild(ghost);drag={board,from:sq,ghost,x:e.clientX,y:e.clientY,moved:false,pid:e.pointerId};placeGhost(e.clientX,e.clientY,r.width);try{sq.setPointerCapture?.(e.pointerId)}catch{}}
-function placeGhost(x,y,size){if(!drag)return;const s=size||drag.from.getBoundingClientRect().width;Object.assign(drag.ghost.style,{width:s+'px',height:s+'px',left:(x-s/2)+'px',top:(y-s/2)+'px'})}
-function dragMove(e){if(!drag||e.pointerId!==drag.pid)return;if(Math.hypot(e.clientX-drag.x,e.clientY-drag.y)>7)drag.moved=true;placeGhost(e.clientX,e.clientY)}
-function dragEnd(e){if(!drag||e.pointerId!==drag.pid)return;const d=drag;drag=null;d.ghost.remove();if(!d.moved)return;const hit=document.elementFromPoint(e.clientX,e.clientY)?.closest('.square');if(!hit||hit.closest('.chess-board')!==d.board)return;suppressUntil=Date.now()+450;synthetic=true;d.from.click();hit.click();setTimeout(()=>synthetic=false,0)}
-document.addEventListener('pointerdown',dragStart,{passive:true});document.addEventListener('pointermove',dragMove,{passive:true});document.addEventListener('pointerup',dragEnd,{passive:true});document.addEventListener('click',e=>{if(!synthetic&&Date.now()<suppressUntil){e.preventDefault();e.stopImmediatePropagation()}},true);
+
+function purgeGhosts(){document.querySelectorAll('.cc-drag-ghost').forEach(n=>n.remove())}
+function cancelDrag(){if(drag?.ghost)drag.ghost.remove();drag=null;purgeGhosts()}
+function makeGhost(d,x,y){if(d.ghost)return;purgeGhosts();const piece=d.from.querySelector('.piece');if(!piece)return;d.ghost=piece.cloneNode(true);d.ghost.classList.add('cc-drag-ghost');document.body.appendChild(d.ghost);placeGhost(d,x,y,d.size)}
+function placeGhost(d,x,y,size){if(!d?.ghost)return;const s=size||d.size||d.from.getBoundingClientRect().width;Object.assign(d.ghost.style,{width:s+'px',height:s+'px',left:(x-s/2)+'px',top:(y-s/2)+'px'})}
+function dragStart(e){
+ if(e.button!==undefined&&e.button!==0)return;
+ const sq=e.target.closest('.square'),board=e.target.closest('#play .chess-board, #puzzles .chess-board');
+ if(!sq||!board||!sq.querySelector('.piece'))return;
+ cancelDrag();
+ const r=sq.getBoundingClientRect();
+ drag={board,from:sq,ghost:null,x:e.clientX,y:e.clientY,moved:false,pid:e.pointerId,size:r.width};
+ try{sq.setPointerCapture?.(e.pointerId)}catch{}
+}
+function dragMove(e){
+ if(!drag||e.pointerId!==drag.pid)return;
+ const distance=Math.hypot(e.clientX-drag.x,e.clientY-drag.y);
+ if(!drag.moved&&distance>8){drag.moved=true;makeGhost(drag,e.clientX,e.clientY)}
+ if(drag.moved)placeGhost(drag,e.clientX,e.clientY);
+}
+function dragEnd(e){
+ if(!drag||e.pointerId!==drag.pid)return;
+ const d=drag;drag=null;
+ if(d.ghost)d.ghost.remove();purgeGhosts();
+ if(!d.moved)return;
+ const hit=document.elementFromPoint(e.clientX,e.clientY)?.closest('.square');
+ if(!hit||hit.closest('.chess-board')!==d.board)return;
+ suppressUntil=Date.now()+450;synthetic=true;d.from.click();hit.click();setTimeout(()=>synthetic=false,0);
+}
+function dragCancel(e){if(!drag)return;if(e?.pointerId!==undefined&&e.pointerId!==drag.pid)return;cancelDrag()}
+
+document.addEventListener('pointerdown',dragStart,{passive:true});
+document.addEventListener('pointermove',dragMove,{passive:true});
+document.addEventListener('pointerup',dragEnd,{passive:true});
+document.addEventListener('pointercancel',dragCancel,{passive:true});
+document.addEventListener('lostpointercapture',dragCancel,true);
+document.addEventListener('click',e=>{if(!synthetic&&Date.now()<suppressUntil){e.preventDefault();e.stopImmediatePropagation()}},true);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)cancelDrag()});
+window.addEventListener('blur',cancelDrag);
+window.addEventListener('pagehide',cancelDrag);
+document.addEventListener('click',e=>{if(e.target.closest('[data-go]'))cancelDrag()},true);
+
+purgeGhosts();
 addToggle();new MutationObserver(addToggle).observe(document.body,{childList:true,subtree:true});
 })();
