@@ -1,12 +1,12 @@
 {
   "name": "chess-command",
-  "version": "1.1.0",
+  "version": "1.5.0",
   "private": true,
-  "description": "A mobile-first personal chess gym: play computer opponents, learn openings, solve puzzles, track progress, customise skins, and explore Tri-D chess in the Lab.",
+  "description": "A mobile-first personal chess gym: play, review, learn openings, solve adaptive puzzles, train middlegames and endgames, and track progress.",
   "scripts": {
     "test": "node tests/chess-core.test.js",
     "test:chess": "node tests/chess-core.test.js",
-    "check:js": "node --check chess-core.js && node --check data.js && node --check stockfish-bridge.js && node --check chess-app.js && node --check pwa-init.js && node --check piece-skin.js && node --check mobile-ui.js && node --check sw.js",
+    "check:js": "node --check chess-core.js && node --check data.js && node --check stockfish-bridge.js && node --check chess-app.js && node --check learning-v5.js && node --check pwa-init.js && node --check piece-skin.js && node --check mobile-ui.js && node --check sw.js",
     "release:check": "npm test && npm run check:js"
   }
 }
