@@ -19,7 +19,7 @@ def assert_board(d,board_id):
  assert result['ok'],f'{board_id} integrity failed: {result}'
  assert result['dark']==32 and result['light']==32,result
  assert all(result['corners'].values()),result
- visible=d.execute_script("""const b=document.getElementById(arguments[0]),rgb=s=>getComputedStyle(b.querySelector(`.square[data-square="${s}"]`)).backgroundColor.match(/[\d.]+/g).slice(0,3).map(Number),lum=a=>.2126*a[0]+.7152*a[1]+.0722*a[2],a1=lum(rgb('a1')),h1=lum(rgb('h1')),a8=lum(rgb('a8')),h8=lum(rgb('h8'));return {a1,h1,a8,h8,ok:a1<h1&&h8<a8};""",board_id)
+ visible=d.execute_script(r"""const b=document.getElementById(arguments[0]),rgb=s=>{const v=getComputedStyle(b.querySelector(`.square[data-square="${s}"]`)).backgroundImage,m=v.match(/rgba?\(([^)]+)\)/);return m?m[1].split(',').slice(0,3).map(Number):[0,0,0]},lum=a=>.2126*a[0]+.7152*a[1]+.0722*a[2],a1=lum(rgb('a1')),h1=lum(rgb('h1')),a8=lum(rgb('a8')),h8=lum(rgb('h8'));return {a1,h1,a8,h8,ok:a1<h1&&h8<a8};""",board_id)
  assert visible['ok'],f'{board_id} visible corner colours wrong: {visible}'
  return result
 
